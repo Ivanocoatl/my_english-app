@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Lumina Lingua - Práctica</title>
+    <title>Lumina Lingua - Práctica de Inglés</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <!-- Fuentes de Google -->
@@ -58,6 +58,16 @@
             animation: pulse-ring 2s infinite;
             background: linear-gradient(to bottom right, #b31b25, #fb5151) !important;
         }
+        
+        /* Animación para subir de nivel */
+        @keyframes level-up {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; color: #f8a010; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .level-up-anim {
+            animation: level-up 1s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col overflow-x-hidden">
@@ -65,15 +75,15 @@
     <!-- Barra Superior -->
     <header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white/70 backdrop-blur-md bg-slate-100 shadow-[0_8px_32px_rgba(36,44,81,0.06)] font-['Plus_Jakarta_Sans'] tracking-tight antialiased">
         <div class="text-xl font-bold text-slate-900">
-            El Santuario
+            Lumina Lingua
         </div>
         <div class="flex items-center gap-4">
-            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low">
+            <div id="level-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low transition-all duration-300">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
-                <span class="font-semibold text-primary text-sm">Nivel B2</span>
+                <span id="current-level-text" class="font-semibold text-primary text-sm">Nivel A1</span>
             </div>
             <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low">
-                <span class="font-semibold text-on-surface text-sm">1,240 pts</span>
+                <span id="total-score" class="font-semibold text-on-surface text-sm">0 pts</span>
             </div>
         </div>
     </header>
@@ -84,18 +94,11 @@
         <!-- Encabezado de Progreso -->
         <section class="flex flex-col gap-3">
             <div class="flex justify-between items-end mb-1">
-                <h1 class="font-headline font-extrabold text-3xl tracking-tight text-on-surface">Práctica</h1>
+                <h1 class="font-headline font-extrabold text-3xl tracking-tight text-on-surface">Práctica Oral (EE.UU.)</h1>
                 <span id="progress-text" class="font-label text-sm font-medium text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">0/5 completadas</span>
             </div>
             <!-- Barra de progreso dinámica -->
             <div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden relative">
-                <div class="absolute inset-0 flex">
-                    <div class="flex-1 border-r border-surface-container/30"></div>
-                    <div class="flex-1 border-r border-surface-container/30"></div>
-                    <div class="flex-1 border-r border-surface-container/30"></div>
-                    <div class="flex-1 border-r border-surface-container/30"></div>
-                    <div class="flex-1"></div>
-                </div>
                 <div id="progress-fill" class="h-full bg-gradient-to-r from-primary to-primary-container rounded-full relative transition-all duration-500 ease-out" style="width: 0%;">
                     <div class="absolute right-0 top-0 bottom-0 w-8 bg-white/20 blur-sm rounded-r-full"></div>
                 </div>
@@ -117,7 +120,7 @@
                 
                 <!-- Frase Objetivo -->
                 <div class="flex flex-col gap-4 max-w-lg mx-auto">
-                    <h2 id="phrase-text" class="font-headline font-bold text-4xl md:text-5xl leading-tight text-on-surface tracking-tight" lang="fr">
+                    <h2 id="phrase-text" class="font-headline font-bold text-4xl md:text-5xl leading-tight text-on-surface tracking-tight" lang="en">
                         <!-- El texto se inyecta por JS -->
                     </h2>
                 </div>
@@ -153,7 +156,7 @@
                 <span id="user-spoken-text">...</span>
             </div>
             <!-- Botón para avanzar -->
-            <button id="next-btn" class="hidden w-full py-3 mt-2 rounded-xl bg-primary text-white font-bold hover:bg-primary-dim transition-colors">
+            <button id="next-btn" class="hidden w-full py-3 mt-2 rounded-xl bg-primary text-white font-bold hover:bg-primary-dim transition-colors shadow-md">
                 Continuar a la siguiente
             </button>
         </section>
@@ -221,17 +224,41 @@
     <!-- Lógica de la Aplicación -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- BASE DE DATOS DE FRASES (Francés - Español) ---
-        const phrases = [
-            { fr: "L'essentiel est invisible pour les yeux.", es: "Lo esencial es invisible a los ojos." },
-            { fr: "C'est la vie.", es: "Así es la vida." },
-            { fr: "Je voudrais un café s'il vous plaît.", es: "Quisiera un café, por favor." },
-            { fr: "Vouloir c'est pouvoir.", es: "Querer es poder." },
-            { fr: "Mieux vaut tard que jamais.", es: "Más vale tarde que nunca." }
-        ];
+        // --- BASE DE DATOS ESTRUCTURA TIPO JSON (Inglés de EE.UU.) ---
+        // Esto simula lo que cargarías desde un archivo datos.json externo.
+        // Lo dejamos incrustado para que tu app funcione en GitHub Pages sin problemas de rutas.
+        const courseDataJSON = {
+            "niveles": [
+                {
+                    "id": "A1",
+                    "nombre": "Nivel A1",
+                    "frases": [
+                        { "en": "Hello, how are you?", "es": "Hola, ¿cómo estás?" },
+                        { "en": "My name is John.", "es": "Mi nombre es John." },
+                        { "en": "Nice to meet you.", "es": "Gusto en conocerte." },
+                        { "en": "I am learning English.", "es": "Estoy aprendiendo inglés." },
+                        { "en": "Where is the bathroom?", "es": "¿Dónde está el baño?" }
+                    ]
+                },
+                {
+                    "id": "A2",
+                    "nombre": "Nivel A2",
+                    "frases": [
+                        { "en": "I would like to order a coffee, please.", "es": "Me gustaría pedir un café, por favor." },
+                        { "en": "What time does the train leave?", "es": "¿A qué hora sale el tren?" },
+                        { "en": "Could you repeat that slower?", "es": "¿Podrías repetir eso más despacio?" },
+                        { "en": "I went to the store yesterday.", "es": "Fui a la tienda ayer." },
+                        { "en": "Do you accept credit cards?", "es": "¿Aceptan tarjetas de crédito?" }
+                    ]
+                }
+            ]
+        };
 
-        let currentIndex = 0;
+        // --- ESTADO DE LA APLICACIÓN ---
+        let currentLevelIndex = 0; // 0 = A1, 1 = A2
+        let currentPhraseIndex = 0;
         let isTranslationVisible = false;
+        let totalScore = 0;
 
         // --- REFERENCIAS AL DOM ---
         const phraseText = document.getElementById('phrase-text');
@@ -255,23 +282,40 @@
         const userSpokenText = document.getElementById('user-spoken-text');
         const nextBtn = document.getElementById('next-btn');
 
+        const currentLevelText = document.getElementById('current-level-text');
+        const levelBadge = document.getElementById('level-badge');
+        const totalScoreDisplay = document.getElementById('total-score');
+
         // --- FUNCIONES PRINCIPALES ---
+
+        function getCurrentPhrases() {
+            return courseDataJSON.niveles[currentLevelIndex].frases;
+        }
 
         // Cargar la frase actual en la interfaz
         function loadPhrase() {
-            if(currentIndex >= phrases.length) {
-                // Fin del ejercicio
-                phraseText.innerHTML = "¡Práctica completada! 🎉";
-                translationText.classList.add('hidden');
-                toggleTransBtn.classList.add('hidden');
-                speakBtn.classList.add('hidden');
-                listenBtn.classList.add('hidden');
-                feedbackArea.classList.add('hidden');
-                return;
+            const phrases = getCurrentPhrases();
+
+            // Si terminamos las frases de este nivel
+            if(currentPhraseIndex >= phrases.length) {
+                // Verificar si hay un siguiente nivel
+                if (currentLevelIndex < courseDataJSON.niveles.length - 1) {
+                    levelUp();
+                    return;
+                } else {
+                    // Fin total del curso
+                    phraseText.innerHTML = "¡Curso Completado! 🏆";
+                    translationText.classList.add('hidden');
+                    toggleTransBtn.classList.add('hidden');
+                    speakBtn.classList.add('hidden');
+                    listenBtn.classList.add('hidden');
+                    feedbackArea.classList.add('hidden');
+                    return;
+                }
             }
 
-            const current = phrases[currentIndex];
-            phraseText.innerText = current.fr;
+            const current = phrases[currentPhraseIndex];
+            phraseText.innerText = current.en;
             translationText.innerText = current.es;
             
             // Ocultar traducción al cambiar de frase
@@ -283,9 +327,25 @@
             nextBtn.classList.add('hidden');
             
             // Actualizar progreso
-            const progress = (currentIndex / phrases.length) * 100;
+            const progress = (currentPhraseIndex / phrases.length) * 100;
             progressFill.style.width = `${progress}%`;
-            progressText.innerText = `${currentIndex}/${phrases.length} completadas`;
+            progressText.innerText = `${currentPhraseIndex}/${phrases.length} completadas (${courseDataJSON.niveles[currentLevelIndex].id})`;
+        }
+
+        function levelUp() {
+            currentLevelIndex++;
+            currentPhraseIndex = 0; // Reiniciar para el nuevo nivel
+            
+            const newLevelName = courseDataJSON.niveles[currentLevelIndex].nombre;
+            currentLevelText.innerText = newLevelName;
+            
+            // Animación visual de subida de nivel
+            levelBadge.classList.add('level-up-anim');
+            setTimeout(() => {
+                levelBadge.classList.remove('level-up-anim');
+            }, 1000);
+
+            loadPhrase();
         }
 
         // Interfaz de traducción
@@ -306,33 +366,38 @@
             updateTranslationUI();
         });
 
-        // --- SÍNTESIS DE VOZ (Texto a Voz) ---
-        let frenchVoice = null;
+        // --- SÍNTESIS DE VOZ (Texto a Voz - US English) ---
+        let englishVoice = null;
         
-        // Cargar voces disponibles (el navegador a veces tarda un poco)
         function loadVoices() {
             const voices = window.speechSynthesis.getVoices();
-            // Buscar voz en francés (Francia o Canadá)
-            frenchVoice = voices.find(v => v.lang === 'fr-FR' || v.lang.startsWith('fr'));
+            // Buscar voz en inglés de EE.UU.
+            englishVoice = voices.find(v => v.lang === 'en-US');
+            
+            // Fallback por si acaso no hay en-US estricto, busca cualquier inglés
+            if(!englishVoice) {
+                englishVoice = voices.find(v => v.lang.startsWith('en'));
+            }
         }
         
         window.speechSynthesis.onvoiceschanged = loadVoices;
-        loadVoices(); // Intento inicial
+        loadVoices(); 
 
         listenBtn.addEventListener('click', () => {
-            const utterance = new SpeechSynthesisUtterance(phrases[currentIndex].fr);
-            utterance.lang = 'fr-FR';
-            utterance.rate = 0.85; // Un poco más lento para que sea más fácil aprender
+            const phrases = getCurrentPhrases();
+            const utterance = new SpeechSynthesisUtterance(phrases[currentPhraseIndex].en);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85; // Un poco más lento
             
-            if (frenchVoice) {
-                utterance.voice = frenchVoice;
+            if (englishVoice) {
+                utterance.voice = englishVoice;
             }
             window.speechSynthesis.speak(utterance);
         });
 
-        // --- ALGORITMO DE SIMILITUD (Distancia de Levenshtein simplificada para palabras) ---
-        // Esto compara qué tan parecido es lo que dijo el usuario a la frase original
+        // --- ALGORITMO DE SIMILITUD ---
         function calculateSimilarity(target, spoken) {
+            // Normalizar: quitar puntuación, espacios extra y pasar a minúsculas
             const normalize = (str) => str.toLowerCase().replace(/[.,!?'\s]/g, '').trim();
             const t = normalize(target);
             const s = normalize(spoken);
@@ -340,27 +405,24 @@
             if (t === s) return 100;
             if (t.length === 0 || s.length === 0) return 0;
             
-            // Para mantenerlo sencillo en navegador, contamos los caracteres correctos en secuencia
             let matches = 0;
             let j = 0;
             for(let i = 0; i < s.length && j < t.length; i++) {
                 if(s[i] === t[j]) { matches++; j++; }
             }
             
-            // Calculamos un porcentaje básico
             const ratio = (matches / t.length) * 100;
-            // Damos un pequeño bonus si las palabras principales están presentes
             return Math.min(100, Math.round(ratio));
         }
 
-        // --- RECONOCIMIENTO DE VOZ (Voz a Texto) ---
+        // --- RECONOCIMIENTO DE VOZ (Voz a Texto - US English) ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
             recognition.continuous = false;
             recognition.interimResults = false;
-            recognition.lang = 'fr-FR'; // Escuchar en francés
+            recognition.lang = 'en-US'; // Escuchar en inglés americano
 
             recognition.onstart = () => {
                 speakBtn.classList.add('listening-active');
@@ -373,14 +435,14 @@
                 const transcript = event.results[0][0].transcript;
                 userSpokenText.innerText = `"${transcript}"`;
                 
-                const targetPhrase = phrases[currentIndex].fr;
+                const currentPhrases = getCurrentPhrases();
+                const targetPhrase = currentPhrases[currentPhraseIndex].en;
                 const score = calculateSimilarity(targetPhrase, transcript);
                 
                 // Mostrar resultados
                 feedbackArea.classList.remove('hidden');
                 feedbackScore.innerText = `Precisión: ${score}%`;
                 
-                // Estilar según el resultado
                 feedbackArea.className = "w-full max-w-md mx-auto rounded-2xl p-4 flex flex-col items-center gap-4 shadow-lg border transition-all duration-300";
                 
                 if (score > 75) {
@@ -390,6 +452,11 @@
                     feedbackIcon.classList.replace('text-error', 'text-secondary-dim');
                     feedbackTitle.innerText = "¡Excelente pronunciación!";
                     nextBtn.classList.remove('hidden'); // Permitir avanzar
+                    
+                    // Sumar puntos
+                    totalScore += score;
+                    totalScoreDisplay.innerText = `${totalScore} pts`;
+
                 } else if (score > 40) {
                     // Regular
                     feedbackArea.classList.add('bg-surface-container-highest', 'text-on-surface', 'border-outline-variant');
@@ -426,7 +493,6 @@
             };
 
             speakBtn.addEventListener('click', () => {
-                // Iniciar la escucha
                 try {
                     recognition.start();
                 } catch (e) {
@@ -435,7 +501,6 @@
             });
             
         } else {
-            // Fallback si el navegador no soporta Speech Recognition (ej. Firefox sin banderas)
             speakBtn.addEventListener('click', () => {
                 alert("Tu navegador no soporta el reconocimiento de voz web nativo. Intenta usar Google Chrome o Microsoft Edge.");
             });
@@ -443,11 +508,12 @@
 
         // Avanzar a la siguiente frase
         nextBtn.addEventListener('click', () => {
-            currentIndex++;
+            currentPhraseIndex++;
             loadPhrase();
         });
 
         // Iniciar la aplicación
+        currentLevelText.innerText = courseDataJSON.niveles[0].nombre;
         loadPhrase();
     });
     </script>
