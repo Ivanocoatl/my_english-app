@@ -1,0 +1,27 @@
+{
+    "niveles": [
+        {
+            "id": "A1",
+            "nombre": "Nivel A1",
+            "frases": [
+                { "en": "Hello, how are you?", "es": "Hola, ¿cómo estás?" },
+                { "en": "I am learning English.", "es": "Estoy aprendiendo inglés." }
+            ]
+        },
+        {
+            "id": "A2",
+            "nombre": "Nivel A2",
+            "frases": [
+                { "en": "I would like to order a coffee, please.", "es": "Me gustaría pedir un café, por favor." },
+                { "en": "Do you accept credit cards?", "es": "¿Aceptan tarjetas de crédito?" }
+            ]
+        },
+        {
+            "id": "B1",
+            "nombre": "Nivel B1",
+            "frases": [
+                { "en": "I have been living here for two years.", "es": "He estado viviendo aquí por dos años." }
+            ]
+        }
+    ]
+}
