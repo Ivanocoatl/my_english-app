@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Cognitive Sanctuary - Practice</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary": "#c8ffe0",
+                        "surface-container": "#e4e7ff",
+                        "inverse-on-surface": "#929bc6",
+                        "on-error-container": "#570008",
+                        "on-surface-variant": "#515981",
+                        "surface": "#f7f5ff",
+                        "inverse-primary": "#4d8eff",
+                        "on-secondary-fixed-variant": "#006544",
+                        "primary-dim": "#004ca6",
+                        "tertiary-container": "#f8a010",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#efefff",
+                        "error-dim": "#9f0519",
+                        "background": "#f7f5ff",
+                        "on-background": "#242c51",
+                        "on-secondary-container": "#005a3c",
+                        "on-tertiary": "#fff0e3",
+                        "surface-dim": "#cad2ff",
+                        "outline": "#6c759e",
+                        "tertiary-dim": "#714600",
+                        "secondary-dim": "#005c3d",
+                        "surface-tint": "#0057bd",
+                        "surface-bright": "#f7f5ff",
+                        "primary-container": "#6e9fff",
+                        "tertiary-fixed": "#f8a010",
+                        "tertiary-fixed-dim": "#e79400",
+                        "on-tertiary-fixed-variant": "#563400",
+                        "tertiary": "#815100",
+                        "secondary-container": "#69f6b8",
+                        "outline-variant": "#a3abd7",
+                        "surface-container-high": "#dde1ff",
+                        "primary-fixed-dim": "#5391ff",
+                        "secondary": "#006947",
+                        "on-secondary-fixed": "#00452d",
+                        "on-primary-fixed": "#000000",
+                        "primary": "#0057bd",
+                        "inverse-surface": "#020a2f",
+                        "on-error": "#ffefee",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-surface": "#242c51",
+                        "error": "#b31b25",
+                        "primary-fixed": "#6e9fff",
+                        "secondary-fixed": "#69f6b8",
+                        "on-primary-container": "#002150",
+                        "surface-container-highest": "#d6dbff",
+                        "surface-variant": "#d6dbff",
+                        "error-container": "#fb5151",
+                        "on-tertiary-container": "#4a2c00",
+                        "secondary-fixed-dim": "#58e7ab",
+                        "on-primary": "#f0f2ff",
+                        "on-primary-fixed-variant": "#002a62"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {},
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Smooth gradient glow for main mic button */
+        .glow-effect {
+            background: linear-gradient(135deg, #0057bd, #6e9fff);
+            box-shadow: 0 10px 30px -10px rgba(0, 87, 189, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-on-primary-container md:items-center md:justify-center overflow-x-hidden">
+<!-- Mobile Wrapper for Desktop -->
+<div class="w-full max-w-md md:h-[850px] md:max-h-[921px] md:rounded-[3rem] md:overflow-hidden md:shadow-2xl relative flex flex-col bg-surface md:border-[12px] border-surface-container-lowest">
+<!-- TopAppBar Component from JSON -->
+<header class="bg-surface/70 dark:bg-slate-900/70 backdrop-blur-xl flex justify-between items-center px-6 py-4 w-full sticky top-0 z-40 bg-surface-container-low dark:bg-slate-800">
+<div class="text-lg font-black text-[#242c51] dark:text-slate-100 font-['Plus_Jakarta_Sans'] font-bold tracking-tight">
+                Level A1
+            </div>
+<div class="flex items-center gap-4">
+<!-- Streak Component Style -->
+<div class="flex items-center gap-1 bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-sm font-label font-bold">
+<span class="material-symbols-outlined text-[18px]" data-weight="fill">local_fire_department</span>
+<span>12</span>
+</div>
+<button class="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors rounded-full p-2 flex items-center justify-center">
+<span class="material-symbols-outlined">stars</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col px-6 pt-8 pb-32 relative z-10 overflow-y-auto">
+<!-- Context Tag -->
+<div class="mb-4">
+<span class="inline-block px-3 py-1 bg-surface-container-high text-on-surface-variant font-label text-xs font-semibold uppercase tracking-wider rounded-full">
+                    Pronunciation
+                </span>
+</div>
+<!-- Large Practice Card - Semantic Shell Mandate: No Borders, Tonal Depth -->
+<div class="bg-surface-container-lowest rounded-lg p-8 shadow-[0_10px_40px_-10px_rgba(36,44,81,0.05)] flex flex-col items-center text-center relative overflow-hidden flex-1 justify-center min-h-[300px]">
+<!-- Background Accent -->
+<div class="absolute -top-20 -right-20 w-40 h-40 bg-primary-container/20 rounded-full blur-3xl pointer-events-none"></div>
+<!-- Listen Button -->
+<button class="mb-8 w-16 h-16 rounded-full bg-surface-container-high text-primary hover:bg-surface-container-highest transition-colors flex items-center justify-center group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-surface-container-lowest">
+<span class="material-symbols-outlined text-3xl group-hover:scale-110 transition-transform duration-300">volume_up</span>
+</button>
+<!-- Target Phrase -->
+<h2 class="font-headline text-3xl font-extrabold tracking-tight text-on-surface mb-8 leading-tight">
+                    The cat is on the table.
+                </h2>
+<!-- Translation Reveal Area -->
+<div class="mt-auto pt-8">
+<button class="text-sm font-label text-primary hover:text-primary-dim transition-colors border-b border-primary/30 hover:border-primary pb-0.5">
+                        Show translation
+                    </button>
+</div>
+</div>
+<!-- Hint Area (Asymmetrical Layout) -->
+<div class="mt-8 flex gap-4 items-start pr-8">
+<div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">lightbulb</span>
+</div>
+<p class="font-body text-sm text-on-surface-variant leading-relaxed">
+                    Focus on the rhythm. Stress the words <strong class="text-on-surface font-semibold">cat</strong> and <strong class="text-on-surface font-semibold">ta</strong>ble.
+                </p>
+</div>
+</main>
+<!-- Bottom Action Area - Microphone -->
+<div class="absolute bottom-0 left-0 w-full p-8 flex justify-center z-20 pb-24 md:pb-8 bg-gradient-to-t from-surface via-surface/90 to-transparent">
+<button class="glow-effect w-24 h-24 rounded-full text-white flex items-center justify-center active:scale-95 transition-transform duration-200 relative group">
+<!-- Idle state ripples (subtle) -->
+<div class="absolute inset-0 rounded-full bg-primary/20 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite] group-hover:bg-primary/30 transition-colors"></div>
+<span class="material-symbols-outlined text-4xl relative z-10">mic</span>
+</button>
+</div>
+<!-- BottomNavBar Component from JSON (Only visible on mobile as per requirement "responsive pivot", but since it's an app mockup, we keep it docked) -->
+<nav class="md:hidden bg-surface/80 dark:bg-slate-900/80 backdrop-blur-2xl fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-8 pb-6 pt-2 rounded-t-[2.5rem] bg-surface-container-low dark:bg-slate-800 shadow-[0_-8px_30px_rgb(36,44,81,0.06)]">
+<!-- Inactive -->
+<a class="flex flex-col items-center justify-center text-[#242c51]/50 dark:text-slate-500 p-2 hover:text-blue-600 dark:hover:text-blue-400 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider">Sanctuary</span>
+</a>
+<!-- Active (Practice context) -->
+<a class="flex flex-col items-center justify-center bg-blue-600 dark:bg-blue-500 text-white rounded-full p-3 mb-2 scale-110 shadow-lg shadow-blue-200 dark:shadow-none hover:text-blue-600 dark:hover:text-blue-400 transition-all Active: scale-90 duration-200" href="#">
+<span class="material-symbols-outlined mb-1">record_voice_over</span>
+<span class="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider">Practice</span>
+</a>
+<!-- Inactive -->
+<a class="flex flex-col items-center justify-center text-[#242c51]/50 dark:text-slate-500 p-2 hover:text-blue-600 dark:hover:text-blue-400 transition-all" href="#">
+<span class="material-symbols-outlined mb-1">leaderboard</span>
+<span class="font-['Inter'] text-[11px] font-semibold uppercase tracking-wider">Progress</span>
+</a>
+</nav>
+</div>
+</body></html>
