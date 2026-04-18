@@ -141,13 +141,13 @@
 <!-- Decorative top gradient -->
 <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary-container via-primary to-primary-container opacity-80"></div>
 <!-- Listen Action -->
-<button class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-container-low text-primary hover:bg-surface-container transition-colors active:scale-95 duration-200 mt-2">
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-container-low text-primary hover:bg-surface-container transition-colors active:scale-95 duration-200 mt-2" id="listen-btn">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">volume_up</span>
 <span class="font-label font-medium text-sm">Listen to native</span>
 </button>
 <!-- Target Phrase -->
 <div class="flex flex-col gap-4 max-w-lg mx-auto">
-<h2 class="font-headline font-bold text-4xl md:text-5xl leading-tight text-on-surface tracking-tight" lang="fr">
+<h2 class="font-headline font-bold text-4xl md:text-5xl leading-tight text-on-surface tracking-tight" id="phrase-text" lang="fr">
                         L'essentiel est invisible pour les yeux.
                     </h2>
 </div>
@@ -186,7 +186,7 @@
 <!-- Ambient shadow for depth -->
 <div class="absolute inset-0 bg-primary/20 blur-[32px] rounded-full scale-110 translate-y-2"></div>
 <!-- The Button -->
-<button class="relative w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 z-10">
+<button class="relative w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 z-10" id="speak-btn">
 <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">mic</span>
 <!-- Soundwave visualizer hints (static representation) -->
 <!-- 
@@ -244,4 +244,57 @@
             }
         }
     </style>
-</body></html>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const listenBtn = document.getElementById('listen-btn');
+    const phraseText = document.getElementById('phrase-text');
+    const speakBtn = document.getElementById('speak-btn');
+
+    // Speech Synthesis
+    listenBtn.addEventListener('click', () => {
+      const utterance = new SpeechSynthesisUtterance(phraseText.innerText);
+      // Using en-US or en-GB voice as requested
+      const voices = window.speechSynthesis.getVoices();
+      const englishVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en-GB');
+      if (englishVoice) {
+        utterance.voice = englishVoice;
+      }
+      window.speechSynthesis.speak(utterance);
+    });
+
+    // Speech Recognition Setup
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.lang = 'fr-FR'; // Set to French to match the phrase, though instructions mentioned English voices for synthesis
+
+      recognition.onstart = () => {
+        console.log('Speech recognition started');
+        // Add visual feedback to button
+        speakBtn.classList.add('ring-4', 'ring-primary/50');
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        console.log('Recognition result:', transcript);
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        speakBtn.classList.remove('ring-4', 'ring-primary/50');
+      };
+
+      recognition.onend = () => {
+        console.log('Speech recognition ended');
+        speakBtn.classList.remove('ring-4', 'ring-primary/50');
+      };
+
+      speakBtn.addEventListener('click', () => {
+        recognition.start();
+      });
+    } else {
+      console.warn('Speech Recognition not supported in this browser.');
+    }
+  });
+</script></body></html>
