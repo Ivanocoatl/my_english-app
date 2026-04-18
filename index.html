@@ -7,7 +7,6 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -92,7 +91,16 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-label { font-family: 'Inter', sans-serif; }
     </style>
-</head>
+<style>
+        @keyframes mic-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 87, 189, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 87, 189, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 87, 189, 0); }
+        }
+        .mic-active {
+            animation: mic-pulse 1.5s infinite;
+        }
+    </style></head>
 <body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col overflow-x-hidden">
 <!-- TopAppBar (from JSON) -->
 <header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white/70 backdrop-blur-md bg-slate-100 shadow-[0_8px_32px_rgba(36,44,81,0.06)] font-['Plus_Jakarta_Sans'] tracking-tight antialiased">
@@ -147,37 +155,36 @@
 </button>
 <!-- Target Phrase -->
 <div class="flex flex-col gap-4 max-w-lg mx-auto">
-<h2 class="font-headline font-bold text-4xl md:text-5xl leading-tight text-on-surface tracking-tight" id="phrase-text" lang="fr">
-                        L'essentiel est invisible pour les yeux.
+<h2 class="font-headline font-bold text-4xl md:text-5xl leading-tight text-on-surface tracking-tight" id="phrase-text" lang="en">
+                        What is essential is invisible to the eye.
                     </h2>
 </div>
 <!-- Translation Toggle Area -->
 <div class="w-full pt-6 flex flex-col items-center gap-4 relative">
 <!-- Subtle divider using tonal shift instead of lines -->
 <div class="w-24 h-1 bg-surface-container rounded-full mb-2"></div>
-<button class="font-label font-medium text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5">
+<button class="font-label font-medium text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5" id="translation-btn">
 <span class="material-symbols-outlined text-[18px]">visibility</span>
                         Show Translation
                     </button>
 <!-- Hidden Translation (revealed state simulated) -->
-<!-- 
-                    <p class="font-body text-lg text-on-surface-variant italic px-6 py-4 bg-surface-container-low rounded-xl w-full">
-                        What is essential is invisible to the eye.
+<p class="font-body text-lg text-on-surface-variant italic px-6 py-4 bg-surface-container-low rounded-xl w-full hidden" id="translation-text">
+                        L'essentiel est invisible pour les yeux.
                     </p>
-                    -->
 </div>
 </div>
 </section>
-<!-- Feedback Area (Hidden by default, shown here for structure) -->
-<!-- 
-        <section class="w-full max-w-md mx-auto bg-secondary-container rounded-2xl p-4 flex items-center gap-4 text-on-secondary-container shadow-[0_8px_24px_rgba(0,90,60,0.1)] border border-outline-variant/15">
-            <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-            <div class="flex flex-col">
-                <span class="font-bold text-lg">Excellent pronunciation!</span>
-                <span class="text-sm opacity-90">94% similarity match</span>
-            </div>
-        </section>
-        -->
+<div class="w-full max-w-md mx-auto text-center hidden mb-4 p-3 bg-surface-container rounded-xl text-on-surface" id="transcript-area">
+<span class="font-bold block mb-1">You said:</span>
+<span class="italic" id="transcript-text"></span>
+</div>
+<section class="hidden w-full max-w-md mx-auto bg-secondary-container rounded-2xl p-4 flex items-center gap-4 text-on-secondary-container shadow-[0_8px_24px_rgba(0,90,60,0.1)] border border-outline-variant/15 mt-8" id="feedback-area">
+<span class="material-symbols-outlined text-3xl" id="feedback-icon" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div class="flex flex-col">
+<span class="font-bold text-lg" id="feedback-title">Excellent pronunciation!</span>
+<span class="text-sm opacity-90" id="feedback-subtitle">94% similarity match</span>
+</div>
+</section>
 </main>
 <!-- Floating Speak Button Container -->
 <div class="fixed bottom-32 left-0 right-0 w-full flex justify-center z-40 pointer-events-none">
@@ -188,10 +195,6 @@
 <!-- The Button -->
 <button class="relative w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 z-10" id="speak-btn">
 <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">mic</span>
-<!-- Soundwave visualizer hints (static representation) -->
-<!-- 
-                <div class="absolute -inset-4 border-2 border-primary-container rounded-full opacity-50 animate-ping"></div>
-                -->
 </button>
 <span class="absolute -top-8 left-1/2 -translate-x-1/2 font-label text-xs font-semibold text-on-surface-variant bg-surface-container-high px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Tap to Speak</span>
 </div>
@@ -249,52 +252,111 @@
     const listenBtn = document.getElementById('listen-btn');
     const phraseText = document.getElementById('phrase-text');
     const speakBtn = document.getElementById('speak-btn');
+    const feedbackArea = document.getElementById('feedback-area');
+    const feedbackTitle = document.getElementById('feedback-title');
+    const feedbackSubtitle = document.getElementById('feedback-subtitle');
+    const feedbackIcon = document.getElementById('feedback-icon');
+    const translationBtn = document.getElementById('translation-btn');
+    const translationText = document.getElementById('translation-text');
+    const transcriptArea = document.getElementById('transcript-area');
+    const transcriptTextElement = document.getElementById('transcript-text');
+
+    // Translation Toggle
+    translationBtn.addEventListener('click', () => {
+        translationText.classList.toggle('hidden');
+        const icon = translationBtn.querySelector('span');
+        if (translationText.classList.contains('hidden')) {
+            icon.innerText = 'visibility';
+            translationBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">visibility</span> Show Translation';
+        } else {
+            icon.innerText = 'visibility_off';
+            translationBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">visibility_off</span> Hide Translation';
+        }
+    });
 
     // Speech Synthesis
+    let voices = [];
+    
+    function populateVoiceList() {
+      voices = window.speechSynthesis.getVoices();
+    }
+    
+    populateVoiceList();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = populateVoiceList;
+    }
+
     listenBtn.addEventListener('click', () => {
       const utterance = new SpeechSynthesisUtterance(phraseText.innerText);
-      // Using en-US or en-GB voice as requested
-      const voices = window.speechSynthesis.getVoices();
-      const englishVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en-GB');
-      if (englishVoice) {
-        utterance.voice = englishVoice;
-      }
+      const englishVoice = voices.find(v => v.lang.includes('en-US')) || voices.find(v => v.lang.includes('en'));
+      if (englishVoice) utterance.voice = englishVoice;
       window.speechSynthesis.speak(utterance);
     });
 
-    // Speech Recognition Setup
+    // Similarity Calculation
+    function getSimilarity(s1, s2) {
+      const words1 = s1.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
+      const words2 = s2.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
+      const intersection = words1.filter(word => words2.includes(word));
+      return (intersection.length / Math.max(words1.length, words2.length)) * 100;
+    }
+
+    // Speech Recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
-      recognition.lang = 'fr-FR'; // Set to French to match the phrase, though instructions mentioned English voices for synthesis
+      recognition.lang = 'en-US'; // Changed to English
 
       recognition.onstart = () => {
         console.log('Speech recognition started');
-        // Add visual feedback to button
-        speakBtn.classList.add('ring-4', 'ring-primary/50');
+        speakBtn.classList.add('mic-active');
+        feedbackArea.classList.add('hidden');
+        transcriptArea.classList.add('hidden');
       };
 
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
-        console.log('Recognition result:', transcript);
+        const target = phraseText.innerText.trim();
+        const similarity = getSimilarity(transcript, target);
+        
+        console.log('Recognized:', transcript);
+        console.log('Similarity:', similarity + '%');
+
+        // Show transcript
+        transcriptTextElement.innerText = transcript;
+        transcriptArea.classList.remove('hidden');
+
+        if (similarity > 80) {
+          feedbackArea.classList.remove('hidden', 'bg-error-container', 'text-on-error-container');
+          feedbackArea.classList.add('bg-secondary-container', 'text-on-secondary-container');
+          feedbackTitle.innerText = 'Excellent pronunciation!';
+          feedbackSubtitle.innerText = Math.round(similarity) + '% similarity match';
+          feedbackIcon.innerText = 'check_circle';
+        } else {
+          feedbackArea.classList.remove('hidden', 'bg-secondary-container', 'text-on-secondary-container');
+          feedbackArea.classList.add('bg-error-container', 'text-on-error-container');
+          feedbackTitle.innerText = 'Keep practicing!';
+          feedbackSubtitle.innerText = Math.round(similarity) + '% similarity match';
+          feedbackIcon.innerText = 'error';
+        }
       };
 
       recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
-        speakBtn.classList.remove('ring-4', 'ring-primary/50');
+        speakBtn.classList.remove('mic-active');
       };
 
       recognition.onend = () => {
         console.log('Speech recognition ended');
-        speakBtn.classList.remove('ring-4', 'ring-primary/50');
+        speakBtn.classList.remove('mic-active');
       };
 
       speakBtn.addEventListener('click', () => {
         recognition.start();
       });
     } else {
-      console.warn('Speech Recognition not supported in this browser.');
+      console.warn('Speech Recognition not supported.');
     }
   });
 </script></body></html>
