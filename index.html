@@ -1,362 +1,455 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Lumina Lingua - Practice</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Lumina Lingua - Práctica</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Fuentes de Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Configuración personalizada de Tailwind extraída del diseño original -->
+    <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
         theme: {
           extend: {
-            "colors": {
-                    "error-dim": "#9f0519",
-                    "on-secondary-fixed": "#00452d",
-                    "secondary-container": "#69f6b8",
-                    "on-surface-variant": "#515981",
-                    "on-error": "#ffefee",
-                    "error-container": "#fb5151",
-                    "tertiary-dim": "#714600",
-                    "primary": "#0057bd",
-                    "error": "#b31b25",
-                    "surface-variant": "#d6dbff",
-                    "primary-fixed": "#6e9fff",
-                    "surface-tint": "#0057bd",
-                    "secondary": "#006947",
-                    "on-primary-fixed": "#000000",
-                    "surface-container-highest": "#d6dbff",
-                    "outline": "#6c759e",
-                    "surface-container-low": "#efefff",
-                    "on-primary": "#f0f2ff",
-                    "on-tertiary-fixed-variant": "#563400",
-                    "secondary-dim": "#005c3d",
-                    "surface-container-high": "#dde1ff",
-                    "surface-container": "#e4e7ff",
-                    "on-secondary-container": "#005a3c",
-                    "surface": "#f7f5ff",
-                    "tertiary-fixed-dim": "#e79400",
-                    "on-primary-container": "#002150",
-                    "on-primary-fixed-variant": "#002a62",
-                    "on-secondary-fixed-variant": "#006544",
-                    "inverse-on-surface": "#929bc6",
-                    "tertiary": "#815100",
-                    "on-error-container": "#570008",
-                    "primary-fixed-dim": "#5391ff",
-                    "on-secondary": "#c8ffe0",
-                    "tertiary-fixed": "#f8a010",
-                    "on-tertiary": "#fff0e3",
-                    "on-tertiary-container": "#4a2c00",
-                    "outline-variant": "#a3abd7",
-                    "on-tertiary-fixed": "#2a1700",
-                    "surface-dim": "#cad2ff",
-                    "surface-container-lowest": "#ffffff",
-                    "tertiary-container": "#f8a010",
-                    "secondary-fixed": "#69f6b8",
-                    "background": "#f7f5ff",
-                    "primary-container": "#6e9fff",
-                    "surface-bright": "#f7f5ff",
-                    "primary-dim": "#004ca6",
-                    "secondary-fixed-dim": "#58e7ab",
-                    "inverse-primary": "#4d8eff",
-                    "on-surface": "#242c51",
-                    "on-background": "#242c51",
-                    "inverse-surface": "#020a2f"
+            colors: {
+              "error-dim": "#9f0519", "on-secondary-fixed": "#00452d", "secondary-container": "#69f6b8",
+              "on-surface-variant": "#515981", "on-error": "#ffefee", "error-container": "#fb5151",
+              "tertiary-dim": "#714600", "primary": "#0057bd", "error": "#b31b25",
+              "surface-variant": "#d6dbff", "primary-fixed": "#6e9fff", "surface-tint": "#0057bd",
+              "secondary": "#006947", "on-primary-fixed": "#000000", "surface-container-highest": "#d6dbff",
+              "outline": "#6c759e", "surface-container-low": "#efefff", "on-primary": "#f0f2ff",
+              "on-tertiary-fixed-variant": "#563400", "secondary-dim": "#005c3d", "surface-container-high": "#dde1ff",
+              "surface-container": "#e4e7ff", "on-secondary-container": "#005a3c", "surface": "#f7f5ff",
+              "tertiary-fixed-dim": "#e79400", "on-primary-container": "#002150", "on-primary-fixed-variant": "#002a62",
+              "on-secondary-fixed-variant": "#006544", "inverse-on-surface": "#929bc6", "tertiary": "#815100",
+              "on-error-container": "#570008", "primary-fixed-dim": "#5391ff", "on-secondary": "#c8ffe0",
+              "tertiary-fixed": "#f8a010", "on-tertiary": "#fff0e3", "on-tertiary-container": "#4a2c00",
+              "outline-variant": "#a3abd7", "on-tertiary-fixed": "#2a1700", "surface-dim": "#cad2ff",
+              "surface-container-lowest": "#ffffff", "tertiary-container": "#f8a010", "secondary-fixed": "#69f6b8",
+              "background": "#f7f5ff", "primary-container": "#6e9fff", "surface-bright": "#f7f5ff",
+              "primary-dim": "#004ca6", "secondary-fixed-dim": "#58e7ab", "inverse-primary": "#4d8eff",
+              "on-surface": "#242c51", "on-background": "#242c51", "inverse-surface": "#020a2f"
             },
-            "borderRadius": {
-                    "DEFAULT": "1rem",
-                    "lg": "2rem",
-                    "xl": "3rem",
-                    "full": "9999px"
-            },
-            "spacing": {},
-            "fontFamily": {
-                    "headline": [
-                            "Plus Jakarta Sans"
-                    ],
-                    "body": [
-                            "Plus Jakarta Sans"
-                    ],
-                    "label": [
-                            "Inter"
-                    ]
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Plus Jakarta Sans"],
+              "label": ["Inter"]
             }
           },
         },
       }
     </script>
-<style>
+    <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-label { font-family: 'Inter', sans-serif; }
+        
+        /* Animación para el micrófono cuando está escuchando */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 87, 189, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(0, 87, 189, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 87, 189, 0); }
+        }
+        .listening-active {
+            animation: pulse-ring 2s infinite;
+            background: linear-gradient(to bottom right, #b31b25, #fb5151) !important;
+        }
     </style>
-<style>
-        @keyframes mic-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 87, 189, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(0, 87, 189, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 87, 189, 0); }
-        }
-        .mic-active {
-            animation: mic-pulse 1.5s infinite;
-        }
-    </style></head>
+</head>
 <body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col overflow-x-hidden">
-<!-- TopAppBar (from JSON) -->
-<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white/70 backdrop-blur-md bg-slate-100 shadow-[0_8px_32px_rgba(36,44,81,0.06)] font-['Plus_Jakarta_Sans'] tracking-tight antialiased">
-<div class="text-xl font-bold text-slate-900">
-            The Sanctuary
+    
+    <!-- Barra Superior -->
+    <header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white/70 backdrop-blur-md bg-slate-100 shadow-[0_8px_32px_rgba(36,44,81,0.06)] font-['Plus_Jakarta_Sans'] tracking-tight antialiased">
+        <div class="text-xl font-bold text-slate-900">
+            El Santuario
         </div>
-<div class="flex items-center gap-4">
-<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low">
-<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
-<span class="font-semibold text-primary text-sm">Level B2</span>
-</div>
-<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low">
-<span class="font-semibold text-on-surface text-sm">1,240 pts</span>
-</div>
-</div>
-</header>
-<!-- Main Content Canvas -->
-<main class="flex-grow pt-24 pb-32 px-4 md:px-8 max-w-4xl mx-auto w-full flex flex-col gap-8 relative z-10">
-<!-- Progress Header -->
-<section class="flex flex-col gap-3">
-<div class="flex justify-between items-end mb-1">
-<h1 class="font-headline font-extrabold text-3xl tracking-tight text-on-surface">Practice</h1>
-<span class="font-label text-sm font-medium text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">3/5 correct for C1</span>
-</div>
-<!-- Progress Bar -->
-<div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden relative">
-<!-- Segment markers -->
-<div class="absolute inset-0 flex">
-<div class="flex-1 border-r border-surface-container/30"></div>
-<div class="flex-1 border-r border-surface-container/30"></div>
-<div class="flex-1 border-r border-surface-container/30"></div>
-<div class="flex-1 border-r border-surface-container/30"></div>
-<div class="flex-1"></div>
-</div>
-<!-- Actual progress fill -->
-<div class="h-full bg-gradient-to-r from-primary to-primary-container rounded-full relative" style="width: 60%;">
-<div class="absolute right-0 top-0 bottom-0 w-8 bg-white/20 blur-sm rounded-r-full"></div>
-</div>
-</div>
-</section>
-<!-- Central Practice Card (Glassmorphism & Tonal Nesting) -->
-<section class="flex-grow flex flex-col items-center justify-center relative">
-<!-- Ambient glowing backdrop for the card -->
-<div class="absolute inset-0 bg-primary-container/20 blur-[64px] rounded-full scale-75 -z-10 translate-y-12"></div>
-<div class="w-full max-w-2xl bg-surface-container-lowest rounded-[2.5rem] p-8 md:p-12 flex flex-col items-center text-center gap-8 shadow-[0_16px_48px_rgba(36,44,81,0.08)] border border-outline-variant/15 relative overflow-hidden">
-<!-- Decorative top gradient -->
-<div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary-container via-primary to-primary-container opacity-80"></div>
-<!-- Listen Action -->
-<button class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-container-low text-primary hover:bg-surface-container transition-colors active:scale-95 duration-200 mt-2" id="listen-btn">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">volume_up</span>
-<span class="font-label font-medium text-sm">Listen to native</span>
-</button>
-<!-- Target Phrase -->
-<div class="flex flex-col gap-4 max-w-lg mx-auto">
-<h2 class="font-headline font-bold text-4xl md:text-5xl leading-tight text-on-surface tracking-tight" id="phrase-text" lang="en">
-                        What is essential is invisible to the eye.
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low">
+                <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+                <span class="font-semibold text-primary text-sm">Nivel B2</span>
+            </div>
+            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low">
+                <span class="font-semibold text-on-surface text-sm">1,240 pts</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-grow pt-24 pb-40 px-4 md:px-8 max-w-4xl mx-auto w-full flex flex-col gap-8 relative z-10">
+        
+        <!-- Encabezado de Progreso -->
+        <section class="flex flex-col gap-3">
+            <div class="flex justify-between items-end mb-1">
+                <h1 class="font-headline font-extrabold text-3xl tracking-tight text-on-surface">Práctica</h1>
+                <span id="progress-text" class="font-label text-sm font-medium text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">0/5 completadas</span>
+            </div>
+            <!-- Barra de progreso dinámica -->
+            <div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden relative">
+                <div class="absolute inset-0 flex">
+                    <div class="flex-1 border-r border-surface-container/30"></div>
+                    <div class="flex-1 border-r border-surface-container/30"></div>
+                    <div class="flex-1 border-r border-surface-container/30"></div>
+                    <div class="flex-1 border-r border-surface-container/30"></div>
+                    <div class="flex-1"></div>
+                </div>
+                <div id="progress-fill" class="h-full bg-gradient-to-r from-primary to-primary-container rounded-full relative transition-all duration-500 ease-out" style="width: 0%;">
+                    <div class="absolute right-0 top-0 bottom-0 w-8 bg-white/20 blur-sm rounded-r-full"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tarjeta Central de Práctica -->
+        <section class="flex-grow flex flex-col items-center justify-center relative">
+            <div class="absolute inset-0 bg-primary-container/20 blur-[64px] rounded-full scale-75 -z-10 translate-y-12"></div>
+            
+            <div class="w-full max-w-2xl bg-surface-container-lowest rounded-[2.5rem] p-8 md:p-12 flex flex-col items-center text-center gap-8 shadow-[0_16px_48px_rgba(36,44,81,0.08)] border border-outline-variant/15 relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary-container via-primary to-primary-container opacity-80"></div>
+                
+                <!-- Botón de Escuchar -->
+                <button id="listen-btn" class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-container-low text-primary hover:bg-surface-container transition-colors active:scale-95 duration-200 mt-2">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">volume_up</span>
+                    <span class="font-label font-medium text-sm">Escuchar pronunciación</span>
+                </button>
+                
+                <!-- Frase Objetivo -->
+                <div class="flex flex-col gap-4 max-w-lg mx-auto">
+                    <h2 id="phrase-text" class="font-headline font-bold text-4xl md:text-5xl leading-tight text-on-surface tracking-tight" lang="fr">
+                        <!-- El texto se inyecta por JS -->
                     </h2>
-</div>
-<!-- Translation Toggle Area -->
-<div class="w-full pt-6 flex flex-col items-center gap-4 relative">
-<!-- Subtle divider using tonal shift instead of lines -->
-<div class="w-24 h-1 bg-surface-container rounded-full mb-2"></div>
-<button class="font-label font-medium text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5" id="translation-btn">
-<span class="material-symbols-outlined text-[18px]">visibility</span>
-                        Show Translation
+                </div>
+                
+                <!-- Área de Traducción -->
+                <div class="w-full pt-6 flex flex-col items-center gap-4 relative">
+                    <div class="w-24 h-1 bg-surface-container rounded-full mb-2"></div>
+                    <button id="toggle-translation-btn" class="font-label font-medium text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5">
+                        <span id="translation-icon" class="material-symbols-outlined text-[18px]">visibility</span>
+                        <span id="translation-btn-text">Mostrar traducción</span>
                     </button>
-<!-- Hidden Translation (revealed state simulated) -->
-<p class="font-body text-lg text-on-surface-variant italic px-6 py-4 bg-surface-container-low rounded-xl w-full hidden" id="translation-text">
-                        L'essentiel est invisible pour les yeux.
+                    
+                    <!-- Traducción oculta por defecto -->
+                    <p id="translation-text" class="hidden font-body text-lg text-on-surface-variant italic px-6 py-4 bg-surface-container-low rounded-xl w-full transition-all duration-300">
+                        <!-- El texto se inyecta por JS -->
                     </p>
-</div>
-</div>
-</section>
-<div class="w-full max-w-md mx-auto text-center hidden mb-4 p-3 bg-surface-container rounded-xl text-on-surface" id="transcript-area">
-<span class="font-bold block mb-1">You said:</span>
-<span class="italic" id="transcript-text"></span>
-</div>
-<section class="hidden w-full max-w-md mx-auto bg-secondary-container rounded-2xl p-4 flex items-center gap-4 text-on-secondary-container shadow-[0_8px_24px_rgba(0,90,60,0.1)] border border-outline-variant/15 mt-8" id="feedback-area">
-<span class="material-symbols-outlined text-3xl" id="feedback-icon" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-<div class="flex flex-col">
-<span class="font-bold text-lg" id="feedback-title">Excellent pronunciation!</span>
-<span class="text-sm opacity-90" id="feedback-subtitle">94% similarity match</span>
-</div>
-</section>
-</main>
-<!-- Floating Speak Button Container -->
-<div class="fixed bottom-32 left-0 right-0 w-full flex justify-center z-40 pointer-events-none">
-<!-- Interactive area -->
-<div class="pointer-events-auto relative group">
-<!-- Ambient shadow for depth -->
-<div class="absolute inset-0 bg-primary/20 blur-[32px] rounded-full scale-110 translate-y-2"></div>
-<!-- The Button -->
-<button class="relative w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 z-10" id="speak-btn">
-<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">mic</span>
-</button>
-<span class="absolute -top-8 left-1/2 -translate-x-1/2 font-label text-xs font-semibold text-on-surface-variant bg-surface-container-high px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Tap to Speak</span>
-</div>
-</div>
-<!-- BottomNavBar (from JSON) -->
-<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 backdrop-blur-lg rounded-t-[2.5rem] bg-slate-50 shadow-[0_-8px_32px_rgba(36,44,81,0.06)] md:hidden">
-<a class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-500 px-4 py-2 transition-all duration-300" href="#">
-<span class="material-symbols-outlined mb-1">auto_stories</span>
-<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Learn</span>
-</a>
-<a class="flex flex-col items-center justify-center bg-blue-600 text-white rounded-full px-6 py-2 transition-all duration-300" href="#">
-<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
-<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Practice</span>
-</a>
-<a class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-500 px-4 py-2 transition-all duration-300" href="#">
-<span class="material-symbols-outlined mb-1">timeline</span>
-<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Streaks</span>
-</a>
-<a class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-500 px-4 py-2 transition-all duration-300" href="#">
-<span class="material-symbols-outlined mb-1">person</span>
-<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Profile</span>
-</a>
-</nav>
-<!-- Desktop Side Navigation (visible only on md+) -->
-<nav class="hidden md:flex fixed left-0 top-16 bottom-0 w-24 flex-col items-center py-8 gap-8 bg-surface-container-lowest border-r border-outline-variant/15 z-40">
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group" href="#">
-<span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">auto_stories</span>
-<span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Learn</span>
-</a>
-<!-- Active Tab -->
-<a class="flex flex-col items-center justify-center text-on-primary bg-primary p-3 rounded-xl shadow-lg relative" href="#">
-<div class="absolute inset-0 bg-primary-container blur-md opacity-40 -z-10 rounded-xl"></div>
-<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
-<span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Practice</span>
-</a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group" href="#">
-<span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">timeline</span>
-<span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Streaks</span>
-</a>
-<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group mt-auto" href="#">
-<span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">person</span>
-<span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Profile</span>
-</a>
-</nav>
-<!-- Adjust main content padding for desktop side nav -->
-<style>
+                </div>
+            </div>
+        </section>
+
+        <!-- Área de Resultados (Oculta por defecto) -->
+        <section id="feedback-area" class="hidden w-full max-w-md mx-auto rounded-2xl p-4 flex flex-col items-center gap-4 shadow-lg border transition-all duration-300">
+            <div class="flex items-center gap-4 w-full">
+                <span id="feedback-icon" class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                <div class="flex flex-col flex-grow">
+                    <span id="feedback-title" class="font-bold text-lg">¡Excelente!</span>
+                    <span id="feedback-score" class="text-sm opacity-90">Precisión: 0%</span>
+                </div>
+            </div>
+            <!-- Lo que el sistema escuchó -->
+            <div class="w-full bg-white/50 p-3 rounded-lg text-sm text-left italic">
+                <span class="font-semibold text-xs uppercase opacity-70 block mb-1">Escuché:</span>
+                <span id="user-spoken-text">...</span>
+            </div>
+            <!-- Botón para avanzar -->
+            <button id="next-btn" class="hidden w-full py-3 mt-2 rounded-xl bg-primary text-white font-bold hover:bg-primary-dim transition-colors">
+                Continuar a la siguiente
+            </button>
+        </section>
+        
+    </main>
+
+    <!-- Botón Flotante para Hablar -->
+    <div class="fixed bottom-28 md:bottom-10 left-0 right-0 w-full flex justify-center z-40 pointer-events-none">
+        <div class="pointer-events-auto relative group">
+            <div class="absolute inset-0 bg-primary/20 blur-[32px] rounded-full scale-110 translate-y-2"></div>
+            <button id="speak-btn" class="relative w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 z-10">
+                <span id="mic-icon" class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">mic</span>
+            </button>
+            <span id="speak-hint" class="absolute -top-10 left-1/2 -translate-x-1/2 font-label text-xs font-semibold text-on-surface-variant bg-surface-container-high px-3 py-1.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Toca para hablar</span>
+        </div>
+    </div>
+
+    <!-- Barra de Navegación Inferior (Móvil) -->
+    <nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 backdrop-blur-lg rounded-t-[2.5rem] bg-slate-50 shadow-[0_-8px_32px_rgba(36,44,81,0.06)] md:hidden">
+        <a href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-500 px-4 py-2 transition-all duration-300">
+            <span class="material-symbols-outlined mb-1">auto_stories</span>
+            <span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Aprender</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center bg-blue-600 text-white rounded-full px-6 py-2 transition-all duration-300">
+            <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+            <span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Práctica</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-500 px-4 py-2 transition-all duration-300">
+            <span class="material-symbols-outlined mb-1">timeline</span>
+            <span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Rachas</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-500 px-4 py-2 transition-all duration-300">
+            <span class="material-symbols-outlined mb-1">person</span>
+            <span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Perfil</span>
+        </a>
+    </nav>
+
+    <!-- Navegación Lateral (Escritorio) -->
+    <nav class="hidden md:flex fixed left-0 top-16 bottom-0 w-24 flex-col items-center py-8 gap-8 bg-surface-container-lowest border-r border-outline-variant/15 z-40">
+        <a href="#" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group">
+            <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">auto_stories</span>
+            <span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Aprender</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center text-on-primary bg-primary p-3 rounded-xl shadow-lg relative">
+            <div class="absolute inset-0 bg-primary-container blur-md opacity-40 -z-10 rounded-xl"></div>
+            <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+            <span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Práctica</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group">
+            <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">timeline</span>
+            <span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Rachas</span>
+        </a>
+        <a href="#" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group mt-auto">
+            <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">person</span>
+            <span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Perfil</span>
+        </a>
+    </nav>
+
+    <style>
         @media (min-width: 768px) {
-            main {
-                padding-left: calc(6rem + 2rem); /* nav width + regular padding */
+            main { padding-left: calc(6rem + 2rem); }
+        }
+    </style>
+
+    <!-- Lógica de la Aplicación -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- BASE DE DATOS DE FRASES (Francés - Español) ---
+        const phrases = [
+            { fr: "L'essentiel est invisible pour les yeux.", es: "Lo esencial es invisible a los ojos." },
+            { fr: "C'est la vie.", es: "Así es la vida." },
+            { fr: "Je voudrais un café s'il vous plaît.", es: "Quisiera un café, por favor." },
+            { fr: "Vouloir c'est pouvoir.", es: "Querer es poder." },
+            { fr: "Mieux vaut tard que jamais.", es: "Más vale tarde que nunca." }
+        ];
+
+        let currentIndex = 0;
+        let isTranslationVisible = false;
+
+        // --- REFERENCIAS AL DOM ---
+        const phraseText = document.getElementById('phrase-text');
+        const translationText = document.getElementById('translation-text');
+        const toggleTransBtn = document.getElementById('toggle-translation-btn');
+        const transBtnText = document.getElementById('translation-btn-text');
+        const transIcon = document.getElementById('translation-icon');
+        
+        const listenBtn = document.getElementById('listen-btn');
+        const speakBtn = document.getElementById('speak-btn');
+        const micIcon = document.getElementById('mic-icon');
+        const speakHint = document.getElementById('speak-hint');
+        
+        const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
+        
+        const feedbackArea = document.getElementById('feedback-area');
+        const feedbackIcon = document.getElementById('feedback-icon');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackScore = document.getElementById('feedback-score');
+        const userSpokenText = document.getElementById('user-spoken-text');
+        const nextBtn = document.getElementById('next-btn');
+
+        // --- FUNCIONES PRINCIPALES ---
+
+        // Cargar la frase actual en la interfaz
+        function loadPhrase() {
+            if(currentIndex >= phrases.length) {
+                // Fin del ejercicio
+                phraseText.innerHTML = "¡Práctica completada! 🎉";
+                translationText.classList.add('hidden');
+                toggleTransBtn.classList.add('hidden');
+                speakBtn.classList.add('hidden');
+                listenBtn.classList.add('hidden');
+                feedbackArea.classList.add('hidden');
+                return;
+            }
+
+            const current = phrases[currentIndex];
+            phraseText.innerText = current.fr;
+            translationText.innerText = current.es;
+            
+            // Ocultar traducción al cambiar de frase
+            isTranslationVisible = false;
+            updateTranslationUI();
+            
+            // Ocultar feedback
+            feedbackArea.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            
+            // Actualizar progreso
+            const progress = (currentIndex / phrases.length) * 100;
+            progressFill.style.width = `${progress}%`;
+            progressText.innerText = `${currentIndex}/${phrases.length} completadas`;
+        }
+
+        // Interfaz de traducción
+        function updateTranslationUI() {
+            if (isTranslationVisible) {
+                translationText.classList.remove('hidden');
+                transBtnText.innerText = "Ocultar traducción";
+                transIcon.innerText = "visibility_off";
+            } else {
+                translationText.classList.add('hidden');
+                transBtnText.innerText = "Mostrar traducción";
+                transIcon.innerText = "visibility";
             }
         }
-    </style>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const listenBtn = document.getElementById('listen-btn');
-    const phraseText = document.getElementById('phrase-text');
-    const speakBtn = document.getElementById('speak-btn');
-    const feedbackArea = document.getElementById('feedback-area');
-    const feedbackTitle = document.getElementById('feedback-title');
-    const feedbackSubtitle = document.getElementById('feedback-subtitle');
-    const feedbackIcon = document.getElementById('feedback-icon');
-    const translationBtn = document.getElementById('translation-btn');
-    const translationText = document.getElementById('translation-text');
-    const transcriptArea = document.getElementById('transcript-area');
-    const transcriptTextElement = document.getElementById('transcript-text');
 
-    // Translation Toggle
-    translationBtn.addEventListener('click', () => {
-        translationText.classList.toggle('hidden');
-        const icon = translationBtn.querySelector('span');
-        if (translationText.classList.contains('hidden')) {
-            icon.innerText = 'visibility';
-            translationBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">visibility</span> Show Translation';
-        } else {
-            icon.innerText = 'visibility_off';
-            translationBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">visibility_off</span> Hide Translation';
-        }
-    });
+        toggleTransBtn.addEventListener('click', () => {
+            isTranslationVisible = !isTranslationVisible;
+            updateTranslationUI();
+        });
 
-    // Speech Synthesis
-    let voices = [];
-    
-    function populateVoiceList() {
-      voices = window.speechSynthesis.getVoices();
-    }
-    
-    populateVoiceList();
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = populateVoiceList;
-    }
-
-    listenBtn.addEventListener('click', () => {
-      const utterance = new SpeechSynthesisUtterance(phraseText.innerText);
-      const englishVoice = voices.find(v => v.lang.includes('en-US')) || voices.find(v => v.lang.includes('en'));
-      if (englishVoice) utterance.voice = englishVoice;
-      window.speechSynthesis.speak(utterance);
-    });
-
-    // Similarity Calculation
-    function getSimilarity(s1, s2) {
-      const words1 = s1.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
-      const words2 = s2.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
-      const intersection = words1.filter(word => words2.includes(word));
-      return (intersection.length / Math.max(words1.length, words2.length)) * 100;
-    }
-
-    // Speech Recognition
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.lang = 'en-US'; // Changed to English
-
-      recognition.onstart = () => {
-        console.log('Speech recognition started');
-        speakBtn.classList.add('mic-active');
-        feedbackArea.classList.add('hidden');
-        transcriptArea.classList.add('hidden');
-      };
-
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        const target = phraseText.innerText.trim();
-        const similarity = getSimilarity(transcript, target);
+        // --- SÍNTESIS DE VOZ (Texto a Voz) ---
+        let frenchVoice = null;
         
-        console.log('Recognized:', transcript);
-        console.log('Similarity:', similarity + '%');
-
-        // Show transcript
-        transcriptTextElement.innerText = transcript;
-        transcriptArea.classList.remove('hidden');
-
-        if (similarity > 80) {
-          feedbackArea.classList.remove('hidden', 'bg-error-container', 'text-on-error-container');
-          feedbackArea.classList.add('bg-secondary-container', 'text-on-secondary-container');
-          feedbackTitle.innerText = 'Excellent pronunciation!';
-          feedbackSubtitle.innerText = Math.round(similarity) + '% similarity match';
-          feedbackIcon.innerText = 'check_circle';
-        } else {
-          feedbackArea.classList.remove('hidden', 'bg-secondary-container', 'text-on-secondary-container');
-          feedbackArea.classList.add('bg-error-container', 'text-on-error-container');
-          feedbackTitle.innerText = 'Keep practicing!';
-          feedbackSubtitle.innerText = Math.round(similarity) + '% similarity match';
-          feedbackIcon.innerText = 'error';
+        // Cargar voces disponibles (el navegador a veces tarda un poco)
+        function loadVoices() {
+            const voices = window.speechSynthesis.getVoices();
+            // Buscar voz en francés (Francia o Canadá)
+            frenchVoice = voices.find(v => v.lang === 'fr-FR' || v.lang.startsWith('fr'));
         }
-      };
+        
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices(); // Intento inicial
 
-      recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        speakBtn.classList.remove('mic-active');
-      };
+        listenBtn.addEventListener('click', () => {
+            const utterance = new SpeechSynthesisUtterance(phrases[currentIndex].fr);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.85; // Un poco más lento para que sea más fácil aprender
+            
+            if (frenchVoice) {
+                utterance.voice = frenchVoice;
+            }
+            window.speechSynthesis.speak(utterance);
+        });
 
-      recognition.onend = () => {
-        console.log('Speech recognition ended');
-        speakBtn.classList.remove('mic-active');
-      };
+        // --- ALGORITMO DE SIMILITUD (Distancia de Levenshtein simplificada para palabras) ---
+        // Esto compara qué tan parecido es lo que dijo el usuario a la frase original
+        function calculateSimilarity(target, spoken) {
+            const normalize = (str) => str.toLowerCase().replace(/[.,!?'\s]/g, '').trim();
+            const t = normalize(target);
+            const s = normalize(spoken);
+            
+            if (t === s) return 100;
+            if (t.length === 0 || s.length === 0) return 0;
+            
+            // Para mantenerlo sencillo en navegador, contamos los caracteres correctos en secuencia
+            let matches = 0;
+            let j = 0;
+            for(let i = 0; i < s.length && j < t.length; i++) {
+                if(s[i] === t[j]) { matches++; j++; }
+            }
+            
+            // Calculamos un porcentaje básico
+            const ratio = (matches / t.length) * 100;
+            // Damos un pequeño bonus si las palabras principales están presentes
+            return Math.min(100, Math.round(ratio));
+        }
 
-      speakBtn.addEventListener('click', () => {
-        recognition.start();
-      });
-    } else {
-      console.warn('Speech Recognition not supported.');
-    }
-  });
-</script></body></html>
+        // --- RECONOCIMIENTO DE VOZ (Voz a Texto) ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
+        if (SpeechRecognition) {
+            const recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'fr-FR'; // Escuchar en francés
+
+            recognition.onstart = () => {
+                speakBtn.classList.add('listening-active');
+                micIcon.innerText = "hearing";
+                speakHint.innerText = "Escuchando...";
+                speakHint.style.opacity = "1";
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                userSpokenText.innerText = `"${transcript}"`;
+                
+                const targetPhrase = phrases[currentIndex].fr;
+                const score = calculateSimilarity(targetPhrase, transcript);
+                
+                // Mostrar resultados
+                feedbackArea.classList.remove('hidden');
+                feedbackScore.innerText = `Precisión: ${score}%`;
+                
+                // Estilar según el resultado
+                feedbackArea.className = "w-full max-w-md mx-auto rounded-2xl p-4 flex flex-col items-center gap-4 shadow-lg border transition-all duration-300";
+                
+                if (score > 75) {
+                    // Éxito
+                    feedbackArea.classList.add('bg-secondary-container', 'text-on-secondary-container', 'border-secondary-dim/30');
+                    feedbackIcon.innerText = "check_circle";
+                    feedbackIcon.classList.replace('text-error', 'text-secondary-dim');
+                    feedbackTitle.innerText = "¡Excelente pronunciación!";
+                    nextBtn.classList.remove('hidden'); // Permitir avanzar
+                } else if (score > 40) {
+                    // Regular
+                    feedbackArea.classList.add('bg-surface-container-highest', 'text-on-surface', 'border-outline-variant');
+                    feedbackIcon.innerText = "model_training";
+                    feedbackIcon.classList.replace('text-error', 'text-tertiary');
+                    feedbackTitle.innerText = "Casi lo logras, inténtalo de nuevo";
+                    nextBtn.classList.add('hidden'); // Obligar a repetir
+                } else {
+                    // Mal
+                    feedbackArea.classList.add('bg-error-container/20', 'text-error', 'border-error/30');
+                    feedbackIcon.innerText = "error";
+                    feedbackTitle.innerText = "Necesita mejora";
+                    nextBtn.classList.add('hidden'); // Obligar a repetir
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Error de reconocimiento:', event.error);
+                speakBtn.classList.remove('listening-active');
+                micIcon.innerText = "mic";
+                speakHint.style.opacity = "";
+                speakHint.innerText = "Toca para hablar";
+                
+                if (event.error === 'not-allowed') {
+                    alert('Por favor permite el acceso al micrófono en tu navegador.');
+                }
+            };
+
+            recognition.onend = () => {
+                speakBtn.classList.remove('listening-active');
+                micIcon.innerText = "mic";
+                speakHint.style.opacity = "";
+                speakHint.innerText = "Toca para hablar";
+            };
+
+            speakBtn.addEventListener('click', () => {
+                // Iniciar la escucha
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.log("El reconocimiento ya está en curso.");
+                }
+            });
+            
+        } else {
+            // Fallback si el navegador no soporta Speech Recognition (ej. Firefox sin banderas)
+            speakBtn.addEventListener('click', () => {
+                alert("Tu navegador no soporta el reconocimiento de voz web nativo. Intenta usar Google Chrome o Microsoft Edge.");
+            });
+        }
+
+        // Avanzar a la siguiente frase
+        nextBtn.addEventListener('click', () => {
+            currentIndex++;
+            loadPhrase();
+        });
+
+        // Iniciar la aplicación
+        loadPhrase();
+    });
+    </script>
+</body>
+</html>
