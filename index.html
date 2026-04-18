@@ -316,31 +316,7 @@
 
     <!-- Lógica de la Aplicación -->
     <script>
-    // --- 1. DATOS DE RESPALDO (Por si falla el fetch) ---
-    const fallbackData = {
-        "niveles": [
-            {
-                "id": "A1",
-                "nombre": "Nivel A1: Fundamentos",
-                "frases": [
-                    { "en": "Good morning, nice to meet you.", "es": "Buenos días, encantado de conocerte.", "pronunciacion": "/ɡʊd ˈmɔrnɪŋ, naɪs tu mit ju/" },
-                    { "en": "How are you doing today?", "es": "¿Cómo estás hoy?", "pronunciacion": "/haʊ ɑr ju ˈduɪŋ təˈdeɪ/" },
-                    { "en": "I am learning English for my career.", "es": "Estoy aprendiendo inglés para mi carrera.", "pronunciacion": "/aɪ æm ˈlɜrnɪŋ ˈɪŋɡlɪʃ fɔr maɪ kəˈrɪr/" },
-                    { "en": "Could you repeat that, please?", "es": "¿Podrías repetir eso, por favor?", "pronunciacion": "/kʊd ju rɪˈpit ðæt, pliz/" }
-                ]
-            },
-            {
-                "id": "A2",
-                "nombre": "Nivel A2: Vida Diaria y Trabajo",
-                "frases": [
-                    { "en": "I have experience with data analysis.", "es": "Tengo experiencia con análisis de datos.", "pronunciacion": "/aɪ hæv ɪkˈspɪriəns wɪθ ˈdeɪtə əˈnæləsɪs/" },
-                    { "en": "We need to finish this project by Friday.", "es": "Necesitamos terminar este proyecto para el viernes.", "pronunciacion": "/wi nid tu ˈfɪnɪʃ ðɪs ˈprɑdʒɛkt baɪ ˈfraɪdeɪ/" }
-                ]
-            }
-        ]
-    };
-
-    // --- 2. SISTEMA DE PERFILES Y TIEMPO (LocalStorage) ---
+    // --- 1. SISTEMA DE PERFILES Y TIEMPO (LocalStorage) ---
     let userProfiles = JSON.parse(localStorage.getItem('luminaLinguaProfiles'));
     
     // Si no existen perfiles, los creamos con la estructura nueva de rastreo de tiempo
@@ -427,30 +403,38 @@
 
         let isTranslationVisible = false;
 
-        // 1. CARGA DE DATOS
+        // 1. CARGA DE DATOS (Estricto desde GitHub/Local)
         async function loadCourseData() {
             try {
                 // Buscamos el archivo generado 'datos.json' en la misma carpeta
                 const response = await fetch('datos.json');
-                if (!response.ok) throw new Error("No se pudo cargar");
+                if (!response.ok) throw new Error("No se pudo cargar el archivo");
                 courseDataJSON = await response.json();
-            } catch (error) {
-                console.warn("Usando datos de respaldo internos (fallbackData).", error);
-                courseDataJSON = fallbackData;
-            }
-            
-            document.getElementById('loading-screen').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-            document.getElementById('practice-card').classList.remove('hidden');
-            document.getElementById('mic-container').classList.remove('hidden');
-            
-            setTimeout(() => {
-                document.getElementById('main-content').style.opacity = '1';
-                document.getElementById('practice-card').style.opacity = '1';
-            }, 50);
+                
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                document.getElementById('practice-card').classList.remove('hidden');
+                document.getElementById('mic-container').classList.remove('hidden');
+                
+                setTimeout(() => {
+                    document.getElementById('main-content').style.opacity = '1';
+                    document.getElementById('practice-card').style.opacity = '1';
+                }, 50);
 
-            updateUserUISelection(); 
-            loadPhraseForUser();
+                updateUserUISelection(); 
+                loadPhraseForUser();
+
+            } catch (error) {
+                console.error("Error cargando el JSON:", error);
+                document.getElementById('loading-screen').innerHTML = `
+                    <div class="text-center p-8 max-w-sm">
+                        <span class="material-symbols-outlined text-error text-5xl mb-4">error</span>
+                        <h2 class="font-bold text-xl text-error mb-2">No se encontró datos.json</h2>
+                        <p class="text-on-surface-variant text-sm font-medium">Asegúrate de subir el archivo <code class="bg-surface-container px-1 rounded">datos.json</code> a GitHub junto con este HTML.</p>
+                        <p class="text-on-surface-variant text-xs mt-4 opacity-75">Nota: Si abres esto directamente con doble clic en tu PC (sin un servidor), el navegador bloquea la lectura del JSON por seguridad.</p>
+                    </div>
+                `;
+            }
         }
 
         // 2. CAMBIO DE USUARIO (PERFIL)
