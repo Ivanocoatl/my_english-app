@@ -180,12 +180,14 @@
 
     <!-- Botón Flotante para Hablar -->
     <div id="mic-container" class="fixed bottom-28 md:bottom-10 left-0 right-0 w-full flex justify-center z-40 pointer-events-none hidden">
-        <div class="pointer-events-auto relative group">
-            <div class="absolute inset-0 bg-primary/20 blur-[32px] rounded-full scale-110 translate-y-2"></div>
-            <button id="speak-btn" class="relative w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 z-10">
-                <span id="mic-icon" class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">mic</span>
-            </button>
-            <span id="speak-hint" class="absolute -top-10 left-1/2 -translate-x-1/2 font-label text-xs font-semibold text-on-surface-variant bg-surface-container-high px-3 py-1.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Toca para hablar</span>
+        <div class="pointer-events-auto relative group flex flex-col items-center">
+            <span id="speak-hint" class="font-label text-xs font-semibold text-on-surface-variant bg-surface-container-high px-3 py-1.5 rounded-lg shadow-sm mb-2 transition-opacity whitespace-nowrap opacity-100">Toca para hablar</span>
+            <div class="relative">
+                <div class="absolute inset-0 bg-primary/20 blur-[32px] rounded-full scale-110 translate-y-2"></div>
+                <button id="speak-btn" class="relative w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 z-10">
+                    <span id="mic-icon" class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">mic</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -350,7 +352,7 @@
         };
         saveProfiles();
     } else {
-        // Asegurar compatibilidad con versiones anteriores si existían en localStorage
+        // Asegurar compatibilidad
         ['Vanya', 'Ode', 'Ara'].forEach(user => {
             if (!userProfiles[user].timeTracking) userProfiles[user].timeTracking = {};
         });
@@ -372,9 +374,8 @@
         if (!currentUser) return;
         const now = Date.now();
         const elapsedSecs = Math.floor((now - currentSessionStart) / 1000);
-        currentSessionStart = now; // Reiniciamos el contador de la "sesión corta"
+        currentSessionStart = now;
 
-        // Obtenemos la fecha local en formato YYYY-MM-DD
         const todayObj = new Date();
         const tzOffset = todayObj.getTimezoneOffset() * 60000;
         const todayStr = (new Date(todayObj - tzOffset)).toISOString().split('T')[0];
@@ -387,10 +388,7 @@
         saveProfiles();
     }
     
-    // Iniciar el cronómetro que suma tiempo cada 5 segundos
     setInterval(updateStudyTime, 5000);
-
-    // Guardar el tiempo restante si el usuario cierra o recarga la página
     window.addEventListener('beforeunload', updateStudyTime);
 
     // --- MANEJO DE MODALES ---
@@ -432,6 +430,7 @@
         // 1. CARGA DE DATOS
         async function loadCourseData() {
             try {
+                // Buscamos el archivo generado 'datos.json' en la misma carpeta
                 const response = await fetch('datos.json');
                 if (!response.ok) throw new Error("No se pudo cargar");
                 courseDataJSON = await response.json();
@@ -456,9 +455,9 @@
 
         // 2. CAMBIO DE USUARIO (PERFIL)
         window.switchUser = function(userName) {
-            updateStudyTime(); // Guardar el tiempo del usuario que sale
+            updateStudyTime(); 
             currentUser = userName;
-            currentSessionStart = Date.now(); // Iniciar cronómetro del nuevo usuario
+            currentSessionStart = Date.now(); 
             
             saveProfiles();
             updateUserUISelection();
@@ -498,7 +497,6 @@
             
             totalScoreDisplay.innerText = `${userProfiles[currentUser].score} pts`;
             
-            // Verificación de seguridad si añadieron o quitaron niveles
             if(levelIdx >= courseDataJSON.niveles.length) {
                 showCompletion();
                 return;
@@ -550,6 +548,7 @@
             listenBtn.classList.add('hidden');
             feedbackArea.classList.add('hidden');
             currentLevelText.innerText = "Máximo";
+            speakHint.classList.add('hidden');
         }
 
         function levelUp() {
@@ -580,7 +579,7 @@
             updateTranslationUI();
         });
 
-        // 4. SÍNTESIS DE VOZ (Texto a Voz) Y LECTURA LENTA DE FONÉTICA
+        // 4. SÍNTESIS DE VOZ Y LECTURA LENTA DE FONÉTICA
         let englishVoice = null;
         function loadVoices() {
             const voices = window.speechSynthesis.getVoices();
@@ -591,7 +590,6 @@
         window.speechSynthesis.onvoiceschanged = loadVoices;
         loadVoices(); 
 
-        // Función para leer la frase
         function speakPhrase(rateSpeed = 0.85) {
             const phrases = getCurrentPhrases();
             if(!phrases) return;
@@ -599,24 +597,21 @@
             
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
             utterance.lang = 'en-US';
-            utterance.rate = rateSpeed; // Controlar la velocidad
+            utterance.rate = rateSpeed; 
             if (englishVoice) utterance.voice = englishVoice;
             window.speechSynthesis.speak(utterance);
         }
 
-        // Botón normal de escuchar
         listenBtn.addEventListener('click', () => {
-            speakPhrase(0.85); // Velocidad casi normal
+            speakPhrase(0.85); 
         });
         
-        // Clic en la caja de fonética (IPA) para escuchar muy lento
         ipaContainer.addEventListener('click', () => {
-            // Cancelar cualquier audio anterior
             window.speechSynthesis.cancel();
-            speakPhrase(0.35); // Velocidad exageradamente lenta para identificar sonidos
+            speakPhrase(0.35); // Velocidad extra lenta
         });
 
-        // 5. RECONOCIMIENTO DE VOZ Y EVALUACIÓN
+        // 5. RECONOCIMIENTO DE VOZ ADAPTATIVO
         function calculateSimilarity(target, spoken) {
             const normalize = (str) => str.toLowerCase().replace(/[.,!?'\s]/g, '').trim();
             const t = normalize(target);
@@ -632,72 +627,133 @@
         }
 
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
+            // ¡Clave para tiempo adaptativo! Permitimos escucha continua sin corte automático por silencio corto
+            recognition.continuous = true; 
+            recognition.interimResults = true; // Escritura en tiempo real
             recognition.lang = 'en-US'; 
+            
+            let isListening = false;
+            let recognitionTimeout;
+            let finalTranscript = '';
 
             recognition.onstart = () => {
+                isListening = true;
+                finalTranscript = '';
                 speakBtn.classList.add('listening-active');
-                micIcon.innerText = "hearing";
-                speakHint.innerText = "Escuchando...";
+                // Cambiar el icono visualmente a STOP para que el usuario sepa que puede detenerlo manualmente
+                micIcon.innerText = "stop"; 
+                userSpokenText.innerText = "...";
+                feedbackArea.classList.add('hidden'); // Ocultar resultados de la frase anterior
+
+                // *** CALCULAR TIEMPO ADAPTATIVO SEGÚN LARGO DE LA ORACIÓN ***
+                const currentPhrases = getCurrentPhrases();
+                const targetPhrase = currentPhrases[userProfiles[currentUser].phraseIndex].en;
+                const wordCount = targetPhrase.split(' ').length;
+                
+                // Damos 1.5 segundos por palabra hablada + 3 segundos adicionales de base (Máximo 20 segundos)
+                const timeoutMs = Math.min((wordCount * 1500) + 3000, 20000);
+                const secondsLeft = Math.round(timeoutMs / 1000);
+                
+                speakHint.innerText = `Escuchando... (${secondsLeft}s máx)`;
                 speakHint.style.opacity = "1";
+
+                // Detener automáticamente cuando termine el tiempo justo
+                recognitionTimeout = setTimeout(() => {
+                    if(isListening) {
+                        recognition.stop();
+                    }
+                }, timeoutMs);
             };
 
             recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                userSpokenText.innerText = `"${transcript}"`;
+                let interimTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript + ' ';
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
                 
-                const currentPhrases = getCurrentPhrases();
-                const targetPhrase = currentPhrases[userProfiles[currentUser].phraseIndex].en;
-                const score = calculateSimilarity(targetPhrase, transcript);
-                
-                feedbackArea.classList.remove('hidden');
-                feedbackScore.innerText = `Precisión: ${score}%`;
-                feedbackArea.className = "w-full max-w-md mx-auto rounded-2xl p-4 flex flex-col items-center gap-4 shadow-lg border transition-all duration-300";
-                
-                if (score > 75) {
-                    feedbackArea.classList.add('bg-secondary-container', 'text-on-secondary-container', 'border-secondary-dim/30');
-                    feedbackIcon.innerText = "check_circle";
-                    feedbackIcon.classList.replace('text-error', 'text-secondary-dim');
-                    feedbackTitle.innerText = "¡Excelente pronunciación!";
-                    nextBtn.classList.remove('hidden'); 
+                const currentSpoken = (finalTranscript + interimTranscript).trim();
+                if(currentSpoken) {
+                    userSpokenText.innerText = `"${currentSpoken}"`;
+                }
+            };
+
+            // Cuando se detiene por tiempo o porque el usuario dio clic en STOP
+            recognition.onend = () => {
+                isListening = false;
+                clearTimeout(recognitionTimeout);
+                speakBtn.classList.remove('listening-active');
+                micIcon.innerText = "mic";
+                speakHint.innerText = "Toca para hablar";
+
+                // Obtener texto hablado
+                let finalSpoken = finalTranscript.trim();
+                if(!finalSpoken) {
+                    // Si finalTranscript falló pero tenemos algo intermedio en pantalla, usarlo
+                    finalSpoken = userSpokenText.innerText.replace(/"/g, '').trim();
+                }
+
+                // Evaluar si realmente se capturó algo
+                if (finalSpoken && finalSpoken !== "...") {
+                    const currentPhrases = getCurrentPhrases();
+                    const targetPhrase = currentPhrases[userProfiles[currentUser].phraseIndex].en;
+                    const score = calculateSimilarity(targetPhrase, finalSpoken);
                     
-                    // Sumar score y guardar
-                    userProfiles[currentUser].score += score;
-                    saveProfiles();
-                    totalScoreDisplay.innerText = `${userProfiles[currentUser].score} pts`;
-                } else if (score > 40) {
-                    feedbackArea.classList.add('bg-surface-container-highest', 'text-on-surface', 'border-outline-variant');
-                    feedbackIcon.innerText = "model_training";
-                    feedbackIcon.classList.replace('text-error', 'text-tertiary');
-                    feedbackTitle.innerText = "Casi lo logras, inténtalo de nuevo";
-                    nextBtn.classList.add('hidden'); 
+                    feedbackArea.classList.remove('hidden');
+                    feedbackScore.innerText = `Precisión: ${score}%`;
+                    feedbackArea.className = "w-full max-w-md mx-auto rounded-2xl p-4 flex flex-col items-center gap-4 shadow-lg border transition-all duration-300";
+                    
+                    if (score > 75) {
+                        feedbackArea.classList.add('bg-secondary-container', 'text-on-secondary-container', 'border-secondary-dim/30');
+                        feedbackIcon.innerText = "check_circle";
+                        feedbackIcon.classList.replace('text-error', 'text-secondary-dim');
+                        feedbackTitle.innerText = "¡Excelente pronunciación!";
+                        nextBtn.classList.remove('hidden'); 
+                        
+                        // Sumar score y guardar
+                        userProfiles[currentUser].score += score;
+                        saveProfiles();
+                        totalScoreDisplay.innerText = `${userProfiles[currentUser].score} pts`;
+                    } else if (score > 40) {
+                        feedbackArea.classList.add('bg-surface-container-highest', 'text-on-surface', 'border-outline-variant');
+                        feedbackIcon.innerText = "model_training";
+                        feedbackIcon.classList.replace('text-error', 'text-tertiary');
+                        feedbackTitle.innerText = "Casi lo logras, inténtalo de nuevo";
+                        nextBtn.classList.add('hidden'); 
+                    } else {
+                        feedbackArea.classList.add('bg-error-container/20', 'text-error', 'border-error/30');
+                        feedbackIcon.innerText = "error";
+                        feedbackTitle.innerText = "Necesita mejora";
+                        nextBtn.classList.add('hidden'); 
+                    }
                 } else {
-                    feedbackArea.classList.add('bg-error-container/20', 'text-error', 'border-error/30');
-                    feedbackIcon.innerText = "error";
-                    feedbackTitle.innerText = "Necesita mejora";
-                    nextBtn.classList.add('hidden'); 
+                    speakHint.innerText = "No se detectó voz. Intenta de nuevo.";
+                    setTimeout(() => speakHint.innerText = "Toca para hablar", 2000);
                 }
             };
 
             recognition.onerror = (event) => {
+                isListening = false;
+                clearTimeout(recognitionTimeout);
                 speakBtn.classList.remove('listening-active');
                 micIcon.innerText = "mic";
-                speakHint.style.opacity = "";
-                speakHint.innerText = "Toca para hablar";
-            };
-
-            recognition.onend = () => {
-                speakBtn.classList.remove('listening-active');
-                micIcon.innerText = "mic";
-                speakHint.style.opacity = "";
-                speakHint.innerText = "Toca para hablar";
+                speakHint.innerText = "Error en el micrófono";
+                setTimeout(() => speakHint.innerText = "Toca para hablar", 2000);
             };
 
             speakBtn.addEventListener('click', () => {
-                try { recognition.start(); } catch (e) {}
+                if (isListening) {
+                    // Detener manualmente si ya terminó de hablar antes de que acabe el tiempo adaptativo
+                    recognition.stop();
+                } else {
+                    try { recognition.start(); } catch (e) { console.log(e); }
+                }
             });
             
         } else {
@@ -714,7 +770,7 @@
 
         // 6. GENERACIÓN DEL GRÁFICO DE TIEMPO (Rachas)
         window.openStreakModal = function() {
-            updateStudyTime(); // Asegurar que el tiempo de hoy está al día
+            updateStudyTime(); 
             
             const barsContainer = document.getElementById('streak-chart-bars');
             const labelsContainer = document.getElementById('streak-chart-labels');
@@ -725,16 +781,13 @@
             const todayObj = new Date();
             const tzOffset = todayObj.getTimezoneOffset() * 60000;
             
-            // Array para almacenar los datos de los últimos 7 días
             const last7Days = [];
             let maxSeconds = 0;
             
-            // Generar fechas (de hace 6 días hasta hoy)
             for (let i = 6; i >= 0; i--) {
                 const d = new Date(todayObj - (i * 86400000) - tzOffset);
                 const dateStr = d.toISOString().split('T')[0];
                 
-                // Día de la semana (0 = Dom, 1 = Lun...)
                 const dayNames = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
                 const dayLabel = dayNames[d.getUTCDay()];
                 
@@ -744,27 +797,21 @@
                 last7Days.push({ label: dayLabel, seconds: secondsSpent, isToday: i === 0 });
             }
             
-            // Evitar división por cero
             if (maxSeconds === 0) maxSeconds = 1;
             
-            // Actualizar texto superior (tiempo de hoy)
             const todaySeconds = last7Days[6].seconds;
             const todayMinutes = Math.floor(todaySeconds / 60);
             document.getElementById('streak-today-time').innerText = `${todayMinutes} min`;
 
-            // Construir el gráfico
             last7Days.forEach(day => {
-                const percentage = Math.max((day.seconds / maxSeconds) * 100, 5); // Mínimo 5% de altura visual
+                const percentage = Math.max((day.seconds / maxSeconds) * 100, 5); 
                 const mins = Math.floor(day.seconds / 60);
                 
-                // Color diferente para hoy
                 const barColor = day.isToday ? 'bg-orange-500' : 'bg-primary-container';
                 const textColor = day.isToday ? 'text-orange-600 font-bold' : 'text-on-surface-variant';
                 
-                // Etiqueta del tooltip para ver el tiempo
                 const tooltipText = `${mins}m`;
 
-                // Barra
                 barsContainer.innerHTML += `
                     <div class="relative flex flex-col justify-end items-center flex-1 h-full group">
                         <div class="absolute -top-6 text-[10px] font-bold text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">${tooltipText}</div>
@@ -772,7 +819,6 @@
                     </div>
                 `;
                 
-                // Etiqueta abajo (L, M, M...)
                 labelsContainer.innerHTML += `
                     <div class="flex-1 text-center ${textColor}">${day.label}</div>
                 `;
