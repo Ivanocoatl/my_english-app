@@ -7,7 +7,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <!-- Fuentes de Google -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     
     <!-- Configuración personalizada de Tailwind -->
@@ -38,7 +38,8 @@
             fontFamily: {
               "headline": ["Plus Jakarta Sans"],
               "body": ["Plus Jakarta Sans"],
-              "label": ["Inter"]
+              "label": ["Inter"],
+              "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
             }
           },
         },
@@ -47,8 +48,8 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-label { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'ui-monospace', monospace; letter-spacing: 0.05em; }
         
-        /* Animación para el micrófono cuando está escuchando */
         @keyframes pulse-ring {
             0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 87, 189, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(0, 87, 189, 0); }
@@ -59,25 +60,15 @@
             background: linear-gradient(to bottom right, #b31b25, #fb5151) !important;
         }
         
-        /* Animación para subir de nivel */
         @keyframes level-up {
             0% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.2); opacity: 0.8; color: #f8a010; }
             100% { transform: scale(1); opacity: 1; }
         }
-        .level-up-anim {
-            animation: level-up 1s ease-in-out;
-        }
+        .level-up-anim { animation: level-up 1s ease-in-out; }
 
-        /* Animación para el modal */
-        @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes pop-in {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pop-in { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .modal-bg-anim { animation: fade-in 0.2s ease-out forwards; }
         .modal-content-anim { animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     </style>
@@ -86,16 +77,20 @@
     
     <!-- Barra Superior -->
     <header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white/70 backdrop-blur-md bg-slate-100 shadow-[0_8px_32px_rgba(36,44,81,0.06)] font-['Plus_Jakarta_Sans'] tracking-tight antialiased">
-        <div class="text-xl font-bold text-slate-900">
-            Lumina Lingua
-        </div>
-        <div class="flex items-center gap-4">
-            <div id="level-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low transition-all duration-300">
-                <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
-                <span id="current-level-text" class="font-semibold text-primary text-sm">Cargando...</span>
+        <div class="flex items-center gap-3">
+            <div class="text-xl font-bold text-slate-900">Lumina Lingua</div>
+            <div class="hidden sm:flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full">
+                <span class="material-symbols-outlined text-sm text-primary">person</span>
+                <span id="active-user-display" class="font-label text-xs font-semibold text-primary uppercase tracking-wider">Vanya</span>
             </div>
-            <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-low">
-                <span id="total-score" class="font-semibold text-on-surface text-sm">0 pts</span>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-4">
+            <div id="level-badge" class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-full bg-surface-container-low transition-all duration-300">
+                <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+                <span id="current-level-text" class="font-semibold text-primary text-xs sm:text-sm">Cargando...</span>
+            </div>
+            <div class="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-full bg-surface-container-low">
+                <span id="total-score" class="font-semibold text-on-surface text-xs sm:text-sm">0 pts</span>
             </div>
         </div>
     </header>
@@ -103,19 +98,16 @@
     <!-- Contenido Principal -->
     <main class="flex-grow pt-24 pb-40 px-4 md:px-8 max-w-4xl mx-auto w-full flex flex-col gap-8 relative z-10">
         
-        <!-- Pantalla de Carga (se oculta al cargar datos) -->
         <div id="loading-screen" class="absolute inset-0 flex flex-col items-center justify-center z-20 bg-background rounded-[2.5rem]">
             <span class="material-symbols-outlined text-primary animate-spin text-4xl mb-4">sync</span>
             <p class="font-label text-on-surface-variant">Cargando lecciones...</p>
         </div>
 
-        <!-- Encabezado de Progreso -->
         <section id="main-content" class="flex flex-col gap-3 opacity-0 transition-opacity duration-500 hidden">
             <div class="flex justify-between items-end mb-1">
                 <h1 class="font-headline font-extrabold text-3xl tracking-tight text-on-surface">Práctica Oral (EE.UU.)</h1>
-                <span id="progress-text" class="font-label text-sm font-medium text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">0/5 completadas</span>
+                <span id="progress-text" class="font-label text-sm font-medium text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">0/25 completadas</span>
             </div>
-            <!-- Barra de progreso dinámica -->
             <div class="w-full h-3 bg-surface-container-high rounded-full overflow-hidden relative">
                 <div id="progress-fill" class="h-full bg-gradient-to-r from-primary to-primary-container rounded-full relative transition-all duration-500 ease-out" style="width: 0%;">
                     <div class="absolute right-0 top-0 bottom-0 w-8 bg-white/20 blur-sm rounded-r-full"></div>
@@ -127,31 +119,36 @@
         <section id="practice-card" class="flex-grow flex flex-col items-center justify-center relative opacity-0 transition-opacity duration-500 hidden">
             <div class="absolute inset-0 bg-primary-container/20 blur-[64px] rounded-full scale-75 -z-10 translate-y-12"></div>
             
-            <div class="w-full max-w-2xl bg-surface-container-lowest rounded-[2.5rem] p-8 md:p-12 flex flex-col items-center text-center gap-8 shadow-[0_16px_48px_rgba(36,44,81,0.08)] border border-outline-variant/15 relative overflow-hidden">
+            <div class="w-full max-w-2xl bg-surface-container-lowest rounded-[2.5rem] p-6 sm:p-12 flex flex-col items-center text-center gap-6 shadow-[0_16px_48px_rgba(36,44,81,0.08)] border border-outline-variant/15 relative overflow-hidden">
                 <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary-container via-primary to-primary-container opacity-80"></div>
                 
-                <!-- Botón de Escuchar -->
                 <button id="listen-btn" class="flex items-center gap-2 px-5 py-2.5 rounded-full bg-surface-container-low text-primary hover:bg-surface-container transition-colors active:scale-95 duration-200 mt-2">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">volume_up</span>
                     <span class="font-label font-medium text-sm">Escuchar pronunciación</span>
                 </button>
                 
-                <!-- Frase Objetivo -->
-                <div class="flex flex-col gap-4 max-w-lg mx-auto">
-                    <h2 id="phrase-text" class="font-headline font-bold text-4xl md:text-5xl leading-tight text-on-surface tracking-tight" lang="en-US">
+                <div class="flex flex-col gap-2 max-w-lg mx-auto w-full">
+                    <!-- Frase en Inglés -->
+                    <h2 id="phrase-text" class="font-headline font-bold text-3xl sm:text-5xl leading-tight text-on-surface tracking-tight" lang="en-US">
                         <!-- El texto se inyecta por JS -->
                     </h2>
+                    
+                    <!-- Fonética (AFI/IPA) -->
+                    <div class="flex items-center justify-center gap-2 mt-2 bg-red-50/50 rounded-lg p-2 border border-red-100">
+                        <span class="material-symbols-outlined text-error-dim text-sm">record_voice_over</span>
+                        <p id="ipa-text" class="font-mono text-lg sm:text-xl text-error-dim font-medium tracking-wide">
+                            <!-- IPA se inyecta por JS -->
+                        </p>
+                    </div>
                 </div>
                 
-                <!-- Área de Traducción -->
-                <div class="w-full pt-6 flex flex-col items-center gap-4 relative">
+                <div class="w-full pt-4 flex flex-col items-center gap-4 relative">
                     <div class="w-24 h-1 bg-surface-container rounded-full mb-2"></div>
                     <button id="toggle-translation-btn" class="font-label font-medium text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1.5">
                         <span id="translation-icon" class="material-symbols-outlined text-[18px]">visibility</span>
                         <span id="translation-btn-text">Mostrar traducción</span>
                     </button>
                     
-                    <!-- Traducción oculta por defecto -->
                     <p id="translation-text" class="hidden font-body text-lg text-on-surface-variant italic px-6 py-4 bg-surface-container-low rounded-xl w-full transition-all duration-300">
                         <!-- El texto se inyecta por JS -->
                     </p>
@@ -159,7 +156,7 @@
             </div>
         </section>
 
-        <!-- Área de Resultados (Oculta por defecto) -->
+        <!-- Área de Resultados -->
         <section id="feedback-area" class="hidden w-full max-w-md mx-auto rounded-2xl p-4 flex flex-col items-center gap-4 shadow-lg border transition-all duration-300">
             <div class="flex items-center gap-4 w-full">
                 <span id="feedback-icon" class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
@@ -168,17 +165,14 @@
                     <span id="feedback-score" class="text-sm opacity-90">Precisión: 0%</span>
                 </div>
             </div>
-            <!-- Lo que el sistema escuchó -->
             <div class="w-full bg-white/50 p-3 rounded-lg text-sm text-left italic">
                 <span class="font-semibold text-xs uppercase opacity-70 block mb-1">Escuché:</span>
                 <span id="user-spoken-text">...</span>
             </div>
-            <!-- Botón para avanzar -->
             <button id="next-btn" class="hidden w-full py-3 mt-2 rounded-xl bg-primary text-white font-bold hover:bg-primary-dim transition-colors shadow-md">
                 Continuar a la siguiente
             </button>
         </section>
-        
     </main>
 
     <!-- Botón Flotante para Hablar -->
@@ -193,20 +187,20 @@
     </div>
 
     <!-- Barra de Navegación Inferior (Móvil) -->
-    <nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 backdrop-blur-lg rounded-t-[2.5rem] bg-slate-50 shadow-[0_-8px_32px_rgba(36,44,81,0.06)] md:hidden">
-        <button data-nav="Aprender" class="nav-btn flex flex-col items-center justify-center text-slate-500 hover:text-primary px-4 py-2 transition-all duration-300">
+    <nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-2 pb-6 pt-3 bg-white/80 backdrop-blur-lg rounded-t-[2.5rem] shadow-[0_-8px_32px_rgba(36,44,81,0.06)] md:hidden">
+        <button onclick="openModal('learn-modal')" class="flex flex-col items-center justify-center text-slate-500 hover:text-primary px-3 py-2 transition-all">
             <span class="material-symbols-outlined mb-1">auto_stories</span>
             <span class="font-label text-[10px] font-medium tracking-wide uppercase">Aprender</span>
         </button>
-        <button class="flex flex-col items-center justify-center bg-primary text-white rounded-full px-6 py-2 transition-all duration-300 cursor-default">
+        <button class="flex flex-col items-center justify-center bg-primary text-white rounded-full px-5 py-2 transition-all cursor-default shadow-md">
             <span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
             <span class="font-label text-[10px] font-medium tracking-wide uppercase">Práctica</span>
         </button>
-        <button data-nav="Rachas" class="nav-btn flex flex-col items-center justify-center text-slate-500 hover:text-primary px-4 py-2 transition-all duration-300">
+        <button onclick="openModal('streak-modal')" class="flex flex-col items-center justify-center text-slate-500 hover:text-primary px-3 py-2 transition-all">
             <span class="material-symbols-outlined mb-1">timeline</span>
             <span class="font-label text-[10px] font-medium tracking-wide uppercase">Rachas</span>
         </button>
-        <button data-nav="Perfil" class="nav-btn flex flex-col items-center justify-center text-slate-500 hover:text-primary px-4 py-2 transition-all duration-300">
+        <button onclick="openModal('profile-modal')" class="flex flex-col items-center justify-center text-slate-500 hover:text-primary px-3 py-2 transition-all">
             <span class="material-symbols-outlined mb-1">person</span>
             <span class="font-label text-[10px] font-medium tracking-wide uppercase">Perfil</span>
         </button>
@@ -214,7 +208,7 @@
 
     <!-- Navegación Lateral (Escritorio) -->
     <nav class="hidden md:flex fixed left-0 top-16 bottom-0 w-24 flex-col items-center py-8 gap-8 bg-surface-container-lowest border-r border-outline-variant/15 z-40">
-        <button data-nav="Aprender" class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group w-full">
+        <button onclick="openModal('learn-modal')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group w-full">
             <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">auto_stories</span>
             <span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Aprender</span>
         </button>
@@ -223,107 +217,109 @@
             <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
             <span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Práctica</span>
         </button>
-        <button data-nav="Rachas" class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group w-full">
+        <button onclick="openModal('streak-modal')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group w-full">
             <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">timeline</span>
             <span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Rachas</span>
         </button>
-        <button data-nav="Perfil" class="nav-btn flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group mt-auto w-full">
+        <button onclick="openModal('profile-modal')" class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors p-3 rounded-xl hover:bg-surface-container-low group mt-auto w-full">
             <span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">person</span>
             <span class="font-label text-[10px] mt-1 font-semibold uppercase tracking-wider">Perfil</span>
         </button>
     </nav>
 
-    <!-- Modal Personalizado para Botones de Navegación -->
-    <div id="info-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm modal-bg-anim">
-        <div class="bg-surface-container-lowest rounded-3xl p-8 max-w-sm w-full shadow-2xl modal-content-anim text-center relative border border-outline-variant/20">
+    <!-- MODALES -->
+    
+    <!-- Modal: Aprender (En desarrollo) -->
+    <div id="learn-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm modal-bg-anim">
+        <div class="bg-surface-container-lowest rounded-3xl p-8 max-w-sm w-full shadow-2xl modal-content-anim text-center border border-outline-variant/20">
             <div class="mx-auto w-16 h-16 bg-surface-container rounded-full flex items-center justify-center mb-4">
-                <span class="material-symbols-outlined text-3xl text-primary">construction</span>
+                <span class="material-symbols-outlined text-3xl text-primary">menu_book</span>
             </div>
-            <h3 id="modal-title" class="font-headline text-2xl font-bold text-on-surface mb-2">Sección en desarrollo</h3>
-            <p id="modal-desc" class="font-body text-on-surface-variant mb-8">La sección de <strong id="modal-section-name" class="text-primary">Aprender</strong> estará disponible en la próxima actualización.</p>
-            <button id="close-modal-btn" class="w-full py-3.5 rounded-xl bg-primary text-on-primary font-bold hover:bg-primary-dim transition-colors shadow-md">
-                Entendido
-            </button>
+            <h3 class="font-headline text-2xl font-bold text-on-surface mb-2">Lecciones Teóricas</h3>
+            <p class="font-body text-on-surface-variant mb-8">Esta sección donde explicaremos la gramática y fonética a fondo estará disponible pronto.</p>
+            <button onclick="closeModal('learn-modal')" class="w-full py-3 rounded-xl bg-primary text-on-primary font-bold hover:bg-primary-dim transition-colors">Entendido</button>
         </div>
     </div>
 
-    <style>
-        @media (min-width: 768px) {
-            main { padding-left: calc(6rem + 2rem); }
-        }
-    </style>
+    <!-- Modal: Perfil (Selección de Usuario) -->
+    <div id="profile-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm modal-bg-anim">
+        <div class="bg-surface-container-lowest rounded-3xl p-6 w-full max-w-sm shadow-2xl modal-content-anim border border-outline-variant/20">
+            <h3 class="font-headline text-xl font-bold text-on-surface mb-4 text-center">Cambiar de Perfil</h3>
+            <p class="text-sm text-center text-on-surface-variant mb-6">Selecciona quién está usando la aplicación para cargar su progreso.</p>
+            
+            <div class="flex flex-col gap-3 mb-6">
+                <button onclick="switchUser('Vanya')" class="flex items-center justify-between p-4 rounded-xl border-2 transition-all hover:bg-surface-container-low group" id="btn-user-Vanya">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-600 flex items-center justify-center text-white font-bold">V</div>
+                        <span class="font-bold text-on-surface group-hover:text-primary">Vanya</span>
+                    </div>
+                    <span class="material-symbols-outlined text-primary hidden check-icon">check_circle</span>
+                </button>
+                
+                <button onclick="switchUser('Ode')" class="flex items-center justify-between p-4 rounded-xl border-2 transition-all hover:bg-surface-container-low group" id="btn-user-Ode">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white font-bold">O</div>
+                        <span class="font-bold text-on-surface group-hover:text-primary">Ode</span>
+                    </div>
+                    <span class="material-symbols-outlined text-primary hidden check-icon">check_circle</span>
+                </button>
+                
+                <button onclick="switchUser('Ara')" class="flex items-center justify-between p-4 rounded-xl border-2 transition-all hover:bg-surface-container-low group" id="btn-user-Ara">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center text-white font-bold">A</div>
+                        <span class="font-bold text-on-surface group-hover:text-primary">Ara</span>
+                    </div>
+                    <span class="material-symbols-outlined text-primary hidden check-icon">check_circle</span>
+                </button>
+            </div>
+            
+            <button onclick="closeModal('profile-modal')" class="w-full py-3 rounded-xl bg-surface-container text-on-surface font-bold hover:bg-surface-container-high transition-colors">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal: Rachas -->
+    <div id="streak-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm modal-bg-anim">
+        <div class="bg-surface-container-lowest rounded-3xl p-8 max-w-sm w-full shadow-2xl modal-content-anim text-center border border-outline-variant/20">
+            <div class="mx-auto w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mb-4 relative">
+                <span class="material-symbols-outlined text-5xl text-orange-500" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+            </div>
+            <h3 class="font-headline text-2xl font-bold text-on-surface mb-1">¡Racha actual!</h3>
+            <p class="font-body text-on-surface-variant mb-6">Has practicado por <strong class="text-orange-600 text-xl" id="streak-days-text">3 días</strong> seguidos, <span id="streak-user-name">Vanya</span>.</p>
+            
+            <div class="flex justify-center gap-2 mb-8">
+                <div class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">L</div>
+                <div class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">M</div>
+                <div class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">M</div>
+                <div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center text-xs font-bold">J</div>
+                <div class="w-8 h-8 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center text-xs font-bold">V</div>
+            </div>
+            
+            <button onclick="closeModal('streak-modal')" class="w-full py-3 rounded-xl bg-primary text-on-primary font-bold hover:bg-primary-dim transition-colors">¡A seguir practicando!</button>
+        </div>
+    </div>
 
     <!-- Lógica de la Aplicación -->
     <script>
+    // --- ESTADO Y PERFILES (In-Memory) ---
+    // Aquí guardamos el progreso separado para Vanya, Ode y Ara.
+    const userProfiles = {
+        "Vanya": { levelIndex: 0, phraseIndex: 0, score: 0, streak: 3 },
+        "Ode": { levelIndex: 0, phraseIndex: 0, score: 0, streak: 5 },
+        "Ara": { levelIndex: 0, phraseIndex: 0, score: 0, streak: 1 }
+    };
+    let currentUser = "Vanya";
+    let courseDataJSON = null;
+
+    // --- MANEJO DE MODALES UI ---
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    
+    // --- LÓGICA PRINCIPAL ---
     document.addEventListener('DOMContentLoaded', () => {
-        // --- 1. LÓGICA DE DATOS (JSON EXTERNO O RESPALDO) ---
-        let courseDataJSON = null;
-
-        // Datos de respaldo por si el archivo 'datos.json' no existe aún
-        const fallbackData = {
-            "niveles": [
-                {
-                    "id": "A1",
-                    "nombre": "Nivel A1",
-                    "frases": [
-                        { "en": "Hello, how are you?", "es": "Hola, ¿cómo estás?" },
-                        { "en": "My name is John.", "es": "Mi nombre es John." },
-                        { "en": "Nice to meet you.", "es": "Gusto en conocerte." },
-                        { "en": "I am learning English.", "es": "Estoy aprendiendo inglés." },
-                        { "en": "Where is the bathroom?", "es": "¿Dónde está el baño?" }
-                    ]
-                },
-                {
-                    "id": "A2",
-                    "nombre": "Nivel A2",
-                    "frases": [
-                        { "en": "I would like to order a coffee, please.", "es": "Me gustaría pedir un café, por favor." },
-                        { "en": "What time does the train leave?", "es": "¿A qué hora sale el tren?" },
-                        { "en": "Could you repeat that slower?", "es": "¿Podrías repetir eso más despacio?" },
-                        { "en": "I went to the store yesterday.", "es": "Fui a la tienda ayer." },
-                        { "en": "Do you accept credit cards?", "es": "¿Aceptan tarjetas de crédito?" }
-                    ]
-                }
-            ]
-        };
-
-        // Función para intentar cargar el JSON de un archivo externo
-        async function loadCourseData() {
-            try {
-                // Aquí intenta buscar un archivo llamado "datos.json" en tu repositorio
-                const response = await fetch('datos.json');
-                if (!response.ok) throw new Error("No se pudo cargar el archivo");
-                
-                courseDataJSON = await response.json();
-                console.log("Datos cargados exitosamente desde datos.json");
-            } catch (error) {
-                console.log("No se encontró 'datos.json'. Usando datos de respaldo integrados.");
-                courseDataJSON = fallbackData;
-            }
-            
-            // Ocultar pantalla de carga y mostrar el contenido
-            document.getElementById('loading-screen').classList.add('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-            document.getElementById('practice-card').classList.remove('hidden');
-            document.getElementById('mic-container').classList.remove('hidden');
-            
-            // Un pequeño retraso para la animación de entrada
-            setTimeout(() => {
-                document.getElementById('main-content').style.opacity = '1';
-                document.getElementById('practice-card').style.opacity = '1';
-            }, 50);
-
-            iniciarApp();
-        }
-
-        // --- 2. ESTADO Y VARIABLES DE LA APP ---
-        let currentLevelIndex = 0; 
-        let currentPhraseIndex = 0;
-        let isTranslationVisible = false;
-        let totalScore = 0;
 
         // Referencias al DOM
         const phraseText = document.getElementById('phrase-text');
+        const ipaText = document.getElementById('ipa-text');
         const translationText = document.getElementById('translation-text');
         const toggleTransBtn = document.getElementById('toggle-translation-btn');
         const transBtnText = document.getElementById('translation-btn-text');
@@ -336,6 +332,9 @@
         
         const progressFill = document.getElementById('progress-fill');
         const progressText = document.getElementById('progress-text');
+        const currentLevelText = document.getElementById('current-level-text');
+        const levelBadge = document.getElementById('level-badge');
+        const totalScoreDisplay = document.getElementById('total-score');
         
         const feedbackArea = document.getElementById('feedback-area');
         const feedbackIcon = document.getElementById('feedback-icon');
@@ -344,44 +343,90 @@
         const userSpokenText = document.getElementById('user-spoken-text');
         const nextBtn = document.getElementById('next-btn');
 
-        const currentLevelText = document.getElementById('current-level-text');
-        const levelBadge = document.getElementById('level-badge');
-        const totalScoreDisplay = document.getElementById('total-score');
+        let isTranslationVisible = false;
 
-        // --- 3. LÓGICA DE BOTONES DE NAVEGACIÓN (MODAL) ---
-        const navButtons = document.querySelectorAll('.nav-btn');
-        const infoModal = document.getElementById('info-modal');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const modalSectionName = document.getElementById('modal-section-name');
+        // 1. CARGA DE DATOS
+        async function loadCourseData() {
+            try {
+                const response = await fetch('datos.json');
+                if (!response.ok) throw new Error("No se pudo cargar el archivo");
+                courseDataJSON = await response.json();
+            } catch (error) {
+                console.error("Error cargando datos.json. Asegúrate de tener el archivo en el mismo directorio.", error);
+                document.getElementById('loading-screen').innerHTML = "<p class='text-error font-bold'>Error: No se encontró datos.json</p>";
+                return;
+            }
+            
+            document.getElementById('loading-screen').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            document.getElementById('practice-card').classList.remove('hidden');
+            document.getElementById('mic-container').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('main-content').style.opacity = '1';
+                document.getElementById('practice-card').style.opacity = '1';
+            }, 50);
 
-        navButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const sectionName = btn.getAttribute('data-nav');
-                modalSectionName.innerText = sectionName;
-                infoModal.classList.remove('hidden');
-            });
-        });
-
-        closeModalBtn.addEventListener('click', () => {
-            infoModal.classList.add('hidden');
-        });
-
-        // --- 4. FUNCIONES PRINCIPALES DE LA LECCIÓN ---
-        function getCurrentPhrases() {
-            return courseDataJSON.niveles[currentLevelIndex].frases;
+            updateUserUISelection(); // Pintar el usuario actual en el menú
+            loadPhraseForUser();
         }
 
-        function loadPhrase() {
+        // 2. CAMBIO DE USUARIO (PERFIL)
+        window.switchUser = function(userName) {
+            currentUser = userName;
+            updateUserUISelection();
+            
+            // Actualizar datos de UI header
+            document.getElementById('active-user-display').innerText = currentUser;
+            document.getElementById('streak-user-name').innerText = currentUser;
+            document.getElementById('streak-days-text').innerText = `${userProfiles[currentUser].streak} días`;
+            
+            closeModal('profile-modal');
+            loadPhraseForUser(); // Cargar dónde se quedó este usuario
+        }
+
+        function updateUserUISelection() {
+            // Limpiar estilos de botones
+            ['Vanya', 'Ode', 'Ara'].forEach(name => {
+                const btn = document.getElementById(`btn-user-${name}`);
+                const icon = btn.querySelector('.check-icon');
+                btn.classList.remove('border-primary', 'bg-surface-container-low');
+                btn.classList.add('border-outline-variant/20');
+                icon.classList.add('hidden');
+                
+                if (name === currentUser) {
+                    btn.classList.remove('border-outline-variant/20');
+                    btn.classList.add('border-primary', 'bg-surface-container-low');
+                    icon.classList.remove('hidden');
+                }
+            });
+        }
+
+        // 3. FLUJO DE LECCIONES POR USUARIO
+        function getCurrentPhrases() {
+            const levelIdx = userProfiles[currentUser].levelIndex;
+            return courseDataJSON.niveles[levelIdx].frases;
+        }
+
+        function loadPhraseForUser() {
+            const levelIdx = userProfiles[currentUser].levelIndex;
+            const phraseIdx = userProfiles[currentUser].phraseIndex;
+            
+            // Refrescar puntaje global del usuario
+            totalScoreDisplay.innerText = `${userProfiles[currentUser].score} pts`;
+            currentLevelText.innerText = courseDataJSON.niveles[levelIdx].nombre;
+
             const phrases = getCurrentPhrases();
 
-            // Verificar si el nivel ha terminado
-            if(currentPhraseIndex >= phrases.length) {
-                if (currentLevelIndex < courseDataJSON.niveles.length - 1) {
+            // Si ya terminó todo el nivel
+            if(phraseIdx >= phrases.length) {
+                if (levelIdx < courseDataJSON.niveles.length - 1) {
                     levelUp();
                     return;
                 } else {
-                    // Curso terminado completamente
                     phraseText.innerHTML = "¡Curso Completado! 🏆";
+                    ipaText.innerHTML = "";
+                    ipaText.parentElement.classList.add('hidden');
                     translationText.classList.add('hidden');
                     toggleTransBtn.classList.add('hidden');
                     speakBtn.classList.add('hidden');
@@ -391,9 +436,17 @@
                 }
             }
 
-            const current = phrases[currentPhraseIndex];
+            const current = phrases[phraseIdx];
             phraseText.innerText = current.en;
             translationText.innerText = current.es;
+            
+            // Inyectar IPA si existe
+            if(current.pronunciacion) {
+                ipaText.parentElement.classList.remove('hidden');
+                ipaText.innerText = current.pronunciacion;
+            } else {
+                ipaText.parentElement.classList.add('hidden');
+            }
             
             isTranslationVisible = false;
             updateTranslationUI();
@@ -401,23 +454,22 @@
             feedbackArea.classList.add('hidden');
             nextBtn.classList.add('hidden');
             
-            // Progreso
-            const progress = (currentPhraseIndex / phrases.length) * 100;
+            const progress = (phraseIdx / phrases.length) * 100;
             progressFill.style.width = `${progress}%`;
-            progressText.innerText = `${currentPhraseIndex}/${phrases.length} completadas (${courseDataJSON.niveles[currentLevelIndex].id})`;
+            progressText.innerText = `${phraseIdx}/${phrases.length} completadas (${courseDataJSON.niveles[levelIdx].id})`;
         }
 
         function levelUp() {
-            currentLevelIndex++;
-            currentPhraseIndex = 0; 
+            userProfiles[currentUser].levelIndex++;
+            userProfiles[currentUser].phraseIndex = 0; 
             
-            const newLevelName = courseDataJSON.niveles[currentLevelIndex].nombre;
+            const newLevelName = courseDataJSON.niveles[userProfiles[currentUser].levelIndex].nombre;
             currentLevelText.innerText = newLevelName;
             
             levelBadge.classList.add('level-up-anim');
             setTimeout(() => { levelBadge.classList.remove('level-up-anim'); }, 1000);
 
-            loadPhrase();
+            loadPhraseForUser();
         }
 
         function updateTranslationUI() {
@@ -437,22 +489,20 @@
             updateTranslationUI();
         });
 
-        // --- 5. SÍNTESIS DE VOZ (Texto a Voz - US English STRICT) ---
+        // 4. SÍNTESIS DE VOZ Y RECONOCIMIENTO (Avanzado para EE.UU.)
         let englishVoice = null;
-        
         function loadVoices() {
             const voices = window.speechSynthesis.getVoices();
-            // Buscar voz estrictamente en inglés de EE.UU.
-            englishVoice = voices.find(v => v.lang === 'en-US');
+            englishVoice = voices.find(v => v.lang === 'en-US' && v.name.includes('Google'));
+            if(!englishVoice) englishVoice = voices.find(v => v.lang === 'en-US');
             if(!englishVoice) englishVoice = voices.find(v => v.lang.startsWith('en'));
         }
-        
         window.speechSynthesis.onvoiceschanged = loadVoices;
         loadVoices(); 
 
         listenBtn.addEventListener('click', () => {
             const phrases = getCurrentPhrases();
-            const utterance = new SpeechSynthesisUtterance(phrases[currentPhraseIndex].en);
+            const utterance = new SpeechSynthesisUtterance(phrases[userProfiles[currentUser].phraseIndex].en);
             utterance.lang = 'en-US';
             utterance.rate = 0.85; 
             if (englishVoice) utterance.voice = englishVoice;
@@ -463,28 +513,22 @@
             const normalize = (str) => str.toLowerCase().replace(/[.,!?'\s]/g, '').trim();
             const t = normalize(target);
             const s = normalize(spoken);
-            
             if (t === s) return 100;
             if (t.length === 0 || s.length === 0) return 0;
             
-            let matches = 0;
-            let j = 0;
+            let matches = 0; let j = 0;
             for(let i = 0; i < s.length && j < t.length; i++) {
                 if(s[i] === t[j]) { matches++; j++; }
             }
-            
-            const ratio = (matches / t.length) * 100;
-            return Math.min(100, Math.round(ratio));
+            return Math.min(100, Math.round((matches / t.length) * 100));
         }
 
-        // --- 6. RECONOCIMIENTO DE VOZ (Voz a Texto - US English STRICT) ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
             recognition.continuous = false;
             recognition.interimResults = false;
-            recognition.lang = 'en-US'; // Escuchar en inglés americano
+            recognition.lang = 'en-US'; 
 
             recognition.onstart = () => {
                 speakBtn.classList.add('listening-active');
@@ -498,7 +542,7 @@
                 userSpokenText.innerText = `"${transcript}"`;
                 
                 const currentPhrases = getCurrentPhrases();
-                const targetPhrase = currentPhrases[currentPhraseIndex].en;
+                const targetPhrase = currentPhrases[userProfiles[currentUser].phraseIndex].en;
                 const score = calculateSimilarity(targetPhrase, transcript);
                 
                 feedbackArea.classList.remove('hidden');
@@ -512,8 +556,9 @@
                     feedbackTitle.innerText = "¡Excelente pronunciación!";
                     nextBtn.classList.remove('hidden'); 
                     
-                    totalScore += score;
-                    totalScoreDisplay.innerText = `${totalScore} pts`;
+                    // Sumar score al usuario actual
+                    userProfiles[currentUser].score += score;
+                    totalScoreDisplay.innerText = `${userProfiles[currentUser].score} pts`;
                 } else if (score > 40) {
                     feedbackArea.classList.add('bg-surface-container-highest', 'text-on-surface', 'border-outline-variant');
                     feedbackIcon.innerText = "model_training";
@@ -548,24 +593,17 @@
             
         } else {
             speakBtn.addEventListener('click', () => {
-                // Si el navegador no soporta Speech Recognition, mostramos el modal en vez de un alert feo
-                modalSectionName.innerText = "Navegador no soportado";
-                document.getElementById('modal-desc').innerText = "Tu navegador no soporta reconocimiento de voz nativo. Usa Chrome o Edge.";
-                infoModal.classList.remove('hidden');
+                alert("Tu navegador no soporta reconocimiento de voz nativo. Usa Chrome o Edge.");
             });
         }
 
         nextBtn.addEventListener('click', () => {
-            currentPhraseIndex++;
-            loadPhrase();
+            // Avanzar el índice de frase del usuario actual
+            userProfiles[currentUser].phraseIndex++;
+            loadPhraseForUser();
         });
 
-        // Inicia el proceso de carga
-        function iniciarApp() {
-            currentLevelText.innerText = courseDataJSON.niveles[0].nombre;
-            loadPhrase();
-        }
-
+        // Iniciar
         loadCourseData();
     });
     </script>
