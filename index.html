@@ -316,7 +316,7 @@
 
     <!-- Lógica de la Aplicación -->
     <script>
-    // --- 0. CAPTURADOR DE ERRORES MÓVILES (Para no quedarse a ciegas) ---
+    // --- 0. CAPTURADOR DE ERRORES MÓVILES ---
     window.onerror = function(msg, url, line) {
         const loadingScreen = document.getElementById('loading-screen');
         if(loadingScreen && !loadingScreen.classList.contains('hidden')) {
@@ -336,11 +336,10 @@
     try {
         userProfiles = JSON.parse(localStorage.getItem('luminaLinguaProfiles'));
     } catch(e) {
-        console.warn("LocalStorage bloqueado o corrupto por el navegador móvil.", e);
+        console.warn("LocalStorage bloqueado.", e);
         userProfiles = null;
     }
     
-    // Si no existen perfiles, los creamos
     if (!userProfiles) {
         userProfiles = {
             "Vanya": { levelIndex: 0, phraseIndex: 0, score: 0, timeTracking: {} },
@@ -349,7 +348,6 @@
         };
         saveProfiles();
     } else {
-        // Asegurar compatibilidad
         ['Vanya', 'Ode', 'Ara'].forEach(user => {
             if (!userProfiles[user]) userProfiles[user] = { levelIndex: 0, phraseIndex: 0, score: 0, timeTracking: {} };
             if (!userProfiles[user].timeTracking) userProfiles[user].timeTracking = {};
@@ -367,11 +365,11 @@
             localStorage.setItem('luminaLinguaProfiles', JSON.stringify(userProfiles));
             localStorage.setItem('luminaLinguaCurrentUser', currentUser);
         } catch(e) {
-            console.warn("No se pudo guardar en localStorage (¿Modo incógnito activo?)", e);
+            console.warn("No se pudo guardar en localStorage", e);
         }
     }
 
-    // --- 2. CONTROL DE TIEMPO OPTIMIZADO PARA MÓVILES ---
+    // --- 2. CONTROL DE TIEMPO OPTIMIZADO ---
     function updateStudyTime() {
         if (!currentUser) return;
         const now = Date.now();
@@ -393,12 +391,11 @@
     setInterval(updateStudyTime, 5000);
     window.addEventListener('beforeunload', updateStudyTime);
     
-    // En móviles, el evento "visibilitychange" es más confiable que "beforeunload" cuando bloquean la pantalla
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') {
             updateStudyTime();
         } else {
-            currentSessionStart = Date.now(); // Retoma el cronómetro al volver
+            currentSessionStart = Date.now();
         }
     });
 
@@ -437,10 +434,9 @@
 
         let isTranslationVisible = false;
 
-        // 3. CARGA DE DATOS (Anti-Caché para Móviles)
+        // 3. CARGA DE DATOS
         async function loadCourseData() {
             try {
-                // Añadimos '?v=timestamp' para engañar al celular y obligarlo a bajar la versión más nueva
                 const cacheBuster = new Date().getTime();
                 const response = await fetch(`./datos.json?v=${cacheBuster}`, { cache: "no-store" });
                 
@@ -471,14 +467,14 @@
                         <span class="material-symbols-outlined text-error text-5xl mb-4">cloud_off</span>
                         <h2 class="font-bold text-xl text-error mb-2">Fallo al conectar</h2>
                         <p class="text-on-surface-variant text-sm font-medium">${error.message}</p>
-                        <p class="text-on-surface-variant text-xs mt-4 opacity-75">Comprueba tu internet. Si acabas de actualizar tu GitHub, puede tardar hasta 5 minutos en reflejarse.</p>
+                        <p class="text-on-surface-variant text-xs mt-4 opacity-75">Comprueba tu internet. Asegúrate de tener datos.json en la misma carpeta.</p>
                         <button onclick="location.reload(true)" class="mt-6 px-5 py-2.5 bg-primary text-white rounded-xl font-bold shadow-md hover:bg-primary-dim">Reintentar</button>
                     </div>
                 `;
             }
         }
 
-        // 4. CAMBIO DE USUARIO (PERFIL)
+        // 4. CAMBIO DE USUARIO
         window.switchUser = function(userName) {
             updateStudyTime(); 
             currentUser = userName;
@@ -605,7 +601,7 @@
             updateTranslationUI();
         });
 
-        // 6. SÍNTESIS DE VOZ Y LECTURA LENTA DE FONÉTICA
+        // 6. SÍNTESIS DE VOZ Y LECTURA LENTA
         let englishVoice = null;
         function loadVoices() {
             const voices = window.speechSynthesis.getVoices();
@@ -634,14 +630,49 @@
         
         ipaContainer.addEventListener('click', () => {
             window.speechSynthesis.cancel();
-            speakPhrase(0.35); // Velocidad extra lenta
+            speakPhrase(0.35); 
         });
 
-        // 7. RECONOCIMIENTO DE VOZ ADAPTATIVO
+        // =========================================================================
+        // 7. RECONOCIMIENTO DE VOZ ADAPTATIVO CON TRADUCTOR DE NÚMEROS A TEXTO
+        // =========================================================================
+        
+        // Esta función convierte dígitos como "8" en palabras como "eight"
+        function convertNumbersToWords(str) {
+            const numberMap = {
+                '0': 'zero', '1': 'one', '2': 'two', '3': 'three', '4': 'four', '5': 'five',
+                '6': 'six', '7': 'seven', '8': 'eight', '9': 'nine', '10': 'ten',
+                '11': 'eleven', '12': 'twelve', '13': 'thirteen', '14': 'fourteen',
+                '15': 'fifteen', '16': 'sixteen', '17': 'seventeen', '18': 'eighteen',
+                '19': 'nineteen', '20': 'twenty', '30': 'thirty', '40': 'forty',
+                '50': 'fifty', '60': 'sixty', '70': 'seventy', '80': 'eighty', '90': 'ninety'
+            };
+            
+            return str.replace(/\b\d+\b/g, function(match) {
+                let num = parseInt(match, 10);
+                if (numberMap[num]) return numberMap[num];
+                if (num < 100) {
+                    let tens = Math.floor(num / 10) * 10;
+                    let units = num % 10;
+                    // Los unimos sin espacio porque el eliminador de espacios hará el resto
+                    return numberMap[tens] + '' + numberMap[units];
+                }
+                return match; // Si es un número gigantesco, lo dejamos intacto
+            });
+        }
+
         function calculateSimilarity(target, spoken) {
-            const normalize = (str) => str.toLowerCase().replace(/[.,!?'\s]/g, '').trim();
+            const normalize = (str) => {
+                let s = str.toLowerCase();
+                // 1. Traducimos posibles números ("8" -> "eight")
+                s = convertNumbersToWords(s);
+                // 2. Quitamos todos los espacios y signos de puntuación
+                return s.replace(/[.,!?'\-\s]/g, '').trim();
+            };
+            
             const t = normalize(target);
             const s = normalize(spoken);
+            
             if (t === s) return 100;
             if (t.length === 0 || s.length === 0) return 0;
             
@@ -783,7 +814,7 @@
             loadPhraseForUser();
         });
 
-        // 8. GENERACIÓN DEL GRÁFICO DE TIEMPO (Rachas)
+        // 8. GRÁFICO DE TIEMPO (Rachas)
         window.openStreakModal = function() {
             updateStudyTime(); 
             
