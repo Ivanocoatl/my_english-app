@@ -316,10 +316,31 @@
 
     <!-- Lógica de la Aplicación -->
     <script>
-    // --- 1. SISTEMA DE PERFILES Y TIEMPO (LocalStorage) ---
-    let userProfiles = JSON.parse(localStorage.getItem('luminaLinguaProfiles'));
+    // --- 0. CAPTURADOR DE ERRORES MÓVILES (Para no quedarse a ciegas) ---
+    window.onerror = function(msg, url, line) {
+        const loadingScreen = document.getElementById('loading-screen');
+        if(loadingScreen && !loadingScreen.classList.contains('hidden')) {
+            loadingScreen.innerHTML = `
+                <div class="p-6 text-center text-error max-w-sm">
+                    <span class="material-symbols-outlined text-5xl mb-2">warning</span>
+                    <p class="font-bold text-lg mb-2">Error en el celular</p>
+                    <p class="text-xs font-mono bg-error-container/20 p-2 rounded text-left opacity-80">${msg} (Línea: ${line})</p>
+                    <button onclick="location.reload()" class="mt-6 px-4 py-2 bg-error text-white rounded-lg font-bold">Recargar</button>
+                </div>
+            `;
+        }
+    };
+
+    // --- 1. SISTEMA DE PERFILES CON PROTECCIÓN (LocalStorage) ---
+    let userProfiles;
+    try {
+        userProfiles = JSON.parse(localStorage.getItem('luminaLinguaProfiles'));
+    } catch(e) {
+        console.warn("LocalStorage bloqueado o corrupto por el navegador móvil.", e);
+        userProfiles = null;
+    }
     
-    // Si no existen perfiles, los creamos con la estructura nueva de rastreo de tiempo
+    // Si no existen perfiles, los creamos
     if (!userProfiles) {
         userProfiles = {
             "Vanya": { levelIndex: 0, phraseIndex: 0, score: 0, timeTracking: {} },
@@ -330,22 +351,27 @@
     } else {
         // Asegurar compatibilidad
         ['Vanya', 'Ode', 'Ara'].forEach(user => {
+            if (!userProfiles[user]) userProfiles[user] = { levelIndex: 0, phraseIndex: 0, score: 0, timeTracking: {} };
             if (!userProfiles[user].timeTracking) userProfiles[user].timeTracking = {};
         });
     }
 
-    let currentUser = localStorage.getItem('luminaLinguaCurrentUser') || "Vanya";
-    let courseDataJSON = null;
+    let currentUser = "Vanya";
+    try { currentUser = localStorage.getItem('luminaLinguaCurrentUser') || "Vanya"; } catch(e){}
     
-    // Variables de control de tiempo de sesión
+    let courseDataJSON = null;
     let currentSessionStart = Date.now();
 
     function saveProfiles() {
-        localStorage.setItem('luminaLinguaProfiles', JSON.stringify(userProfiles));
-        localStorage.setItem('luminaLinguaCurrentUser', currentUser);
+        try {
+            localStorage.setItem('luminaLinguaProfiles', JSON.stringify(userProfiles));
+            localStorage.setItem('luminaLinguaCurrentUser', currentUser);
+        } catch(e) {
+            console.warn("No se pudo guardar en localStorage (¿Modo incógnito activo?)", e);
+        }
     }
 
-    // Función que se ejecuta cada 5 segundos para actualizar el tiempo dedicado "hoy"
+    // --- 2. CONTROL DE TIEMPO OPTIMIZADO PARA MÓVILES ---
     function updateStudyTime() {
         if (!currentUser) return;
         const now = Date.now();
@@ -366,6 +392,15 @@
     
     setInterval(updateStudyTime, 5000);
     window.addEventListener('beforeunload', updateStudyTime);
+    
+    // En móviles, el evento "visibilitychange" es más confiable que "beforeunload" cuando bloquean la pantalla
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+            updateStudyTime();
+        } else {
+            currentSessionStart = Date.now(); // Retoma el cronómetro al volver
+        }
+    });
 
     // --- MANEJO DE MODALES ---
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
@@ -374,7 +409,6 @@
     // --- LÓGICA PRINCIPAL ---
     document.addEventListener('DOMContentLoaded', () => {
 
-        // Referencias al DOM
         const phraseText = document.getElementById('phrase-text');
         const ipaContainer = document.getElementById('ipa-container');
         const ipaText = document.getElementById('ipa-text');
@@ -403,13 +437,19 @@
 
         let isTranslationVisible = false;
 
-        // 1. CARGA DE DATOS (Estricto desde GitHub/Local)
+        // 3. CARGA DE DATOS (Anti-Caché para Móviles)
         async function loadCourseData() {
             try {
-                // Buscamos el archivo generado 'datos.json' en la misma carpeta
-                const response = await fetch('datos.json');
-                if (!response.ok) throw new Error("No se pudo cargar el archivo");
+                // Añadimos '?v=timestamp' para engañar al celular y obligarlo a bajar la versión más nueva
+                const cacheBuster = new Date().getTime();
+                const response = await fetch(`./datos.json?v=${cacheBuster}`, { cache: "no-store" });
+                
+                if (!response.ok) throw new Error(`Error de red: ${response.status}`);
                 courseDataJSON = await response.json();
+                
+                if(!courseDataJSON || !courseDataJSON.niveles) {
+                    throw new Error("El archivo JSON no tiene la estructura correcta.");
+                }
                 
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('main-content').classList.remove('hidden');
@@ -425,19 +465,20 @@
                 loadPhraseForUser();
 
             } catch (error) {
-                console.error("Error cargando el JSON:", error);
+                console.error("Error al cargar datos:", error);
                 document.getElementById('loading-screen').innerHTML = `
                     <div class="text-center p-8 max-w-sm">
-                        <span class="material-symbols-outlined text-error text-5xl mb-4">error</span>
-                        <h2 class="font-bold text-xl text-error mb-2">No se encontró datos.json</h2>
-                        <p class="text-on-surface-variant text-sm font-medium">Asegúrate de subir el archivo <code class="bg-surface-container px-1 rounded">datos.json</code> a GitHub junto con este HTML.</p>
-                        <p class="text-on-surface-variant text-xs mt-4 opacity-75">Nota: Si abres esto directamente con doble clic en tu PC (sin un servidor), el navegador bloquea la lectura del JSON por seguridad.</p>
+                        <span class="material-symbols-outlined text-error text-5xl mb-4">cloud_off</span>
+                        <h2 class="font-bold text-xl text-error mb-2">Fallo al conectar</h2>
+                        <p class="text-on-surface-variant text-sm font-medium">${error.message}</p>
+                        <p class="text-on-surface-variant text-xs mt-4 opacity-75">Comprueba tu internet. Si acabas de actualizar tu GitHub, puede tardar hasta 5 minutos en reflejarse.</p>
+                        <button onclick="location.reload(true)" class="mt-6 px-5 py-2.5 bg-primary text-white rounded-xl font-bold shadow-md hover:bg-primary-dim">Reintentar</button>
                     </div>
                 `;
             }
         }
 
-        // 2. CAMBIO DE USUARIO (PERFIL)
+        // 4. CAMBIO DE USUARIO (PERFIL)
         window.switchUser = function(userName) {
             updateStudyTime(); 
             currentUser = userName;
@@ -456,6 +497,7 @@
 
             ['Vanya', 'Ode', 'Ara'].forEach(name => {
                 const btn = document.getElementById(`btn-user-${name}`);
+                if (!btn) return;
                 const icon = btn.querySelector('.check-icon');
                 btn.classList.remove('border-primary', 'bg-surface-container-low');
                 btn.classList.add('border-outline-variant/20');
@@ -469,7 +511,7 @@
             });
         }
 
-        // 3. FLUJO DE LECCIONES
+        // 5. FLUJO DE LECCIONES
         function getCurrentPhrases() {
             const levelIdx = userProfiles[currentUser].levelIndex;
             return courseDataJSON.niveles[levelIdx].frases;
@@ -563,7 +605,7 @@
             updateTranslationUI();
         });
 
-        // 4. SÍNTESIS DE VOZ Y LECTURA LENTA DE FONÉTICA
+        // 6. SÍNTESIS DE VOZ Y LECTURA LENTA DE FONÉTICA
         let englishVoice = null;
         function loadVoices() {
             const voices = window.speechSynthesis.getVoices();
@@ -595,7 +637,7 @@
             speakPhrase(0.35); // Velocidad extra lenta
         });
 
-        // 5. RECONOCIMIENTO DE VOZ ADAPTATIVO
+        // 7. RECONOCIMIENTO DE VOZ ADAPTATIVO
         function calculateSimilarity(target, spoken) {
             const normalize = (str) => str.toLowerCase().replace(/[.,!?'\s]/g, '').trim();
             const t = normalize(target);
@@ -614,9 +656,8 @@
         
         if (SpeechRecognition) {
             const recognition = new SpeechRecognition();
-            // ¡Clave para tiempo adaptativo! Permitimos escucha continua sin corte automático por silencio corto
             recognition.continuous = true; 
-            recognition.interimResults = true; // Escritura en tiempo real
+            recognition.interimResults = true; 
             recognition.lang = 'en-US'; 
             
             let isListening = false;
@@ -627,27 +668,23 @@
                 isListening = true;
                 finalTranscript = '';
                 speakBtn.classList.add('listening-active');
-                // Cambiar el icono visualmente a STOP para que el usuario sepa que puede detenerlo manualmente
                 micIcon.innerText = "stop"; 
                 userSpokenText.innerText = "...";
-                feedbackArea.classList.add('hidden'); // Ocultar resultados de la frase anterior
+                feedbackArea.classList.add('hidden'); 
 
-                // *** CALCULAR TIEMPO ADAPTATIVO SEGÚN LARGO DE LA ORACIÓN ***
                 const currentPhrases = getCurrentPhrases();
                 const targetPhrase = currentPhrases[userProfiles[currentUser].phraseIndex].en;
                 const wordCount = targetPhrase.split(' ').length;
                 
-                // Damos 1.5 segundos por palabra hablada + 3 segundos adicionales de base (Máximo 20 segundos)
                 const timeoutMs = Math.min((wordCount * 1500) + 3000, 20000);
                 const secondsLeft = Math.round(timeoutMs / 1000);
                 
                 speakHint.innerText = `Escuchando... (${secondsLeft}s máx)`;
                 speakHint.style.opacity = "1";
 
-                // Detener automáticamente cuando termine el tiempo justo
                 recognitionTimeout = setTimeout(() => {
                     if(isListening) {
-                        recognition.stop();
+                        try { recognition.stop(); } catch(e){}
                     }
                 }, timeoutMs);
             };
@@ -668,7 +705,6 @@
                 }
             };
 
-            // Cuando se detiene por tiempo o porque el usuario dio clic en STOP
             recognition.onend = () => {
                 isListening = false;
                 clearTimeout(recognitionTimeout);
@@ -676,14 +712,11 @@
                 micIcon.innerText = "mic";
                 speakHint.innerText = "Toca para hablar";
 
-                // Obtener texto hablado
                 let finalSpoken = finalTranscript.trim();
                 if(!finalSpoken) {
-                    // Si finalTranscript falló pero tenemos algo intermedio en pantalla, usarlo
                     finalSpoken = userSpokenText.innerText.replace(/"/g, '').trim();
                 }
 
-                // Evaluar si realmente se capturó algo
                 if (finalSpoken && finalSpoken !== "...") {
                     const currentPhrases = getCurrentPhrases();
                     const targetPhrase = currentPhrases[userProfiles[currentUser].phraseIndex].en;
@@ -700,7 +733,6 @@
                         feedbackTitle.innerText = "¡Excelente pronunciación!";
                         nextBtn.classList.remove('hidden'); 
                         
-                        // Sumar score y guardar
                         userProfiles[currentUser].score += score;
                         saveProfiles();
                         totalScoreDisplay.innerText = `${userProfiles[currentUser].score} pts`;
@@ -727,22 +759,21 @@
                 clearTimeout(recognitionTimeout);
                 speakBtn.classList.remove('listening-active');
                 micIcon.innerText = "mic";
-                speakHint.innerText = "Error en el micrófono";
+                speakHint.innerText = "No te escuché bien";
                 setTimeout(() => speakHint.innerText = "Toca para hablar", 2000);
             };
 
             speakBtn.addEventListener('click', () => {
                 if (isListening) {
-                    // Detener manualmente si ya terminó de hablar antes de que acabe el tiempo adaptativo
-                    recognition.stop();
+                    try { recognition.stop(); } catch(e){}
                 } else {
-                    try { recognition.start(); } catch (e) { console.log(e); }
+                    try { recognition.start(); } catch (e) { console.warn(e); }
                 }
             });
             
         } else {
             speakBtn.addEventListener('click', () => {
-                alert("Tu navegador no soporta reconocimiento de voz nativo. Usa Chrome o Edge.");
+                alert("Tu navegador móvil no soporta reconocimiento de voz nativo. Por favor usa Google Chrome para Android o Safari en iOS.");
             });
         }
 
@@ -752,7 +783,7 @@
             loadPhraseForUser();
         });
 
-        // 6. GENERACIÓN DEL GRÁFICO DE TIEMPO (Rachas)
+        // 8. GENERACIÓN DEL GRÁFICO DE TIEMPO (Rachas)
         window.openStreakModal = function() {
             updateStudyTime(); 
             
