@@ -8,30 +8,28 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap');
-        body { font-family: 'Nunito', sans-serif; background-color: #f0fdfa; } /* Fondo menta súper claro y fresco */
+        body { font-family: 'Nunito', sans-serif; background-color: #f0fdfa; } 
         
-        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.05); }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.05); }
         .vibrant-gradient-a { background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%); }
         .vibrant-gradient-b { background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%); }
         .vibrant-success { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); }
         
-        .toefl-radio { appearance: none; width: 26px; height: 26px; border: 3px solid #cbd5e1; border-radius: 50%; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .toefl-radio:checked { background-color: #0f172a; border-color: #0f172a; box-shadow: inset 0 0 0 6px #fff; transform: scale(1.1); }
+        .toefl-radio { appearance: none; width: 22px; height: 22px; border: 3px solid #cbd5e1; border-radius: 50%; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .toefl-radio:checked { background-color: #0f172a; border-color: #0f172a; box-shadow: inset 0 0 0 5px #fff; transform: scale(1.1); }
         
         .hidden-section { display: none !important; }
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        .active-nav { background: #f0f9ff; border-left: 6px solid #0ea5e9; color: #0369a1; font-weight: 900; }
+        .active-nav { background: #f0f9ff; border-left: 5px solid #0ea5e9; color: #0369a1; font-weight: 900; }
         
-        /* Efecto latido para el temporizador cuando queda poco tiempo */
         .timer-warning { animation: pulse-red 1s infinite; color: #ef4444; font-weight: 900; }
-        @keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.05); text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); } 100% { transform: scale(1); } }
+        @keyframes pulse-red { 0% { transform: scale(1); } 50% { transform: scale(1.05); text-shadow: 0 0 8px rgba(239, 68, 68, 0.5); } 100% { transform: scale(1); } }
 
-        .glow-success { box-shadow: 0 0 20px rgba(52, 211, 153, 0.5); border-color: #34d399; }
+        .glow-success { box-shadow: 0 0 15px rgba(52, 211, 153, 0.5); border-color: #34d399; }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
@@ -39,49 +37,49 @@
 </head>
 <body class="h-screen flex flex-col overflow-hidden text-slate-800">
 
-    <!-- HEADER -->
-    <header class="bg-slate-900 text-white p-4 flex justify-between items-center shadow-2xl z-50 shrink-0">
-        <div class="flex items-center gap-4">
-            <div class="vibrant-gradient-a p-3 rounded-2xl shadow-xl rotate-3">
-                <i class="fas fa-rocket text-xl text-white"></i>
+    <!-- HEADER MÁS COMPACTO -->
+    <header class="bg-slate-900 text-white py-3 px-6 flex justify-between items-center shadow-lg z-50 shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="vibrant-gradient-a p-2 rounded-xl shadow-md rotate-3">
+                <i class="fas fa-rocket text-lg text-white"></i>
             </div>
             <div>
-                <h1 class="text-2xl font-black tracking-tight leading-none uppercase">TOEFL Speed Pro ⚡</h1>
-                <p class="text-[11px] text-sky-400 font-bold uppercase mt-1 tracking-widest">Mastering Time & Accuracy</p>
+                <h1 class="text-xl font-black tracking-tight leading-none uppercase">TOEFL Speed Pro ⚡</h1>
+                <p class="text-[10px] text-sky-400 font-bold uppercase mt-0.5 tracking-widest">Mastering Time</p>
             </div>
         </div>
         
-        <div class="flex items-center gap-6">
-            <div id="q-timer-display" class="bg-slate-800/80 px-6 py-2 rounded-2xl border border-slate-700 text-sm font-black hidden shadow-inner">
-                ⏱️ VELOCIDAD: <span id="q-timer-val" class="text-amber-400 ml-2 text-lg">00:00</span>
+        <div class="flex items-center gap-4">
+            <div id="q-timer-display" class="bg-slate-800/80 px-4 py-1.5 rounded-xl border border-slate-700 text-xs font-black hidden shadow-inner">
+                ⏱️ VELOCIDAD: <span id="q-timer-val" class="text-amber-400 ml-1 text-base">00:00</span>
             </div>
-            <div class="bg-slate-800 px-6 py-2 rounded-2xl font-mono text-2xl text-sky-400 border border-slate-700 shadow-inner">
+            <div class="bg-slate-800 px-4 py-1.5 rounded-xl font-mono text-xl text-sky-400 border border-slate-700 shadow-inner">
                 <span id="timer">00:00</span>
             </div>
-            <button onclick="pausarYSalir()" class="bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white p-3 rounded-2xl transition-all" title="Guardar y Salir">
+            <button onclick="pausarYSalir()" class="bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white p-2.5 rounded-xl transition-all" title="Guardar y Salir">
                 <i class="fas fa-save"></i>
             </button>
         </div>
     </header>
 
-    <!-- PANTALLA DE CARGA (Con TimeOut de seguridad) -->
+    <!-- PANTALLA DE CARGA -->
     <div id="loading-screen" class="absolute inset-0 bg-teal-50 z-[300] flex flex-col items-center justify-center">
-        <div class="w-24 h-24 border-8 border-teal-200 border-t-teal-500 rounded-full animate-spin shadow-lg"></div>
-        <h2 class="mt-8 font-black text-teal-900 text-3xl tracking-tight">Preparando tu entorno... 🌟</h2>
-        <p class="text-teal-600 mt-3 font-bold">Cargando base de datos y configuraciones.</p>
+        <div class="w-16 h-16 border-8 border-teal-200 border-t-teal-500 rounded-full animate-spin shadow-md"></div>
+        <h2 class="mt-6 font-black text-teal-900 text-2xl tracking-tight">Preparando tu entorno... 🌟</h2>
+        <p class="text-teal-600 mt-2 font-bold text-sm">Cargando base de datos.</p>
     </div>
 
-    <!-- HUB DE BIENVENIDA (Resume / Restart) -->
-    <div id="welcome-hub" class="hidden fixed inset-0 z-[250] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-6">
-        <div class="bg-white rounded-[3rem] p-12 max-w-xl w-full shadow-2xl text-center border-t-8 border-sky-500 fade-in">
-            <div class="text-7xl mb-6 animate-bounce">👋</div>
-            <h2 class="text-4xl font-black text-slate-900 mb-3">¡Qué bueno verte!</h2>
-            <p class="text-slate-500 mb-10 text-lg">Tienes un entrenamiento guardado en pausa. ¿Qué energía traes hoy?</p>
-            <div class="grid gap-4">
-                <button onclick="continuarSesion()" class="vibrant-gradient-a text-white py-6 rounded-3xl font-black text-xl shadow-xl hover:scale-105 transition-all flex justify-center items-center gap-3">
+    <!-- HUB DE BIENVENIDA -->
+    <div id="welcome-hub" class="hidden fixed inset-0 z-[250] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[2rem] p-8 max-w-lg w-full shadow-2xl text-center border-t-8 border-sky-500 fade-in">
+            <div class="text-5xl mb-4 animate-bounce">👋</div>
+            <h2 class="text-3xl font-black text-slate-900 mb-2">¡Qué bueno verte!</h2>
+            <p class="text-slate-500 mb-6 text-sm">Tienes un entrenamiento guardado en pausa. ¿Qué energía traes hoy?</p>
+            <div class="grid gap-3">
+                <button onclick="continuarSesion()" class="vibrant-gradient-a text-white py-4 rounded-2xl font-black text-lg shadow-md hover:scale-105 transition-all flex justify-center items-center gap-2">
                     Continuar donde lo dejé 🚀
                 </button>
-                <button onclick="iniciarDesdeCero()" class="bg-slate-100 text-slate-500 py-4 rounded-3xl font-bold text-md hover:bg-rose-50 hover:text-rose-600 transition-all">
+                <button onclick="iniciarDesdeCero()" class="bg-slate-100 text-slate-500 py-3 rounded-2xl font-bold text-sm hover:bg-rose-50 hover:text-rose-600 transition-all">
                     Borrar progreso y empezar de cero 🔄
                 </button>
             </div>
@@ -90,143 +88,143 @@
 
     <div class="flex flex-1 overflow-hidden">
         
-        <!-- SIDEBAR -->
-        <aside class="w-80 bg-white border-r border-slate-200 shadow-xl flex flex-col z-40 shrink-0">
-            <div class="p-8 border-b border-slate-100 bg-slate-50/50">
-                <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Tu Misión</h2>
-                <div id="test-info-nav" class="text-sm font-black text-sky-700">Test no seleccionado</div>
+        <!-- SIDEBAR REDUCIDO -->
+        <aside class="w-64 md:w-72 bg-white border-r border-slate-200 shadow-md flex flex-col z-40 shrink-0">
+            <div class="p-6 border-b border-slate-100 bg-slate-50/50">
+                <h2 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5">Tu Misión</h2>
+                <div id="test-info-nav" class="text-xs font-black text-sky-700">Test no seleccionado</div>
             </div>
-            <nav class="flex-1 overflow-y-auto py-4" id="main-nav">
-                <button id="nav-setup" onclick="cambiarVista('setup')" class="w-full text-left px-8 py-5 hover:bg-sky-50 flex items-center gap-4 transition-all active-nav text-slate-600 font-bold mb-2 rounded-r-3xl">
-                    <i class="fas fa-sliders-h text-lg w-6 text-center"></i> Setup & Audios
+            <nav class="flex-1 overflow-y-auto py-3" id="main-nav">
+                <button id="nav-setup" onclick="cambiarVista('setup')" class="w-full text-left px-6 py-4 hover:bg-sky-50 flex items-center gap-3 transition-all active-nav text-slate-600 font-bold mb-1 rounded-r-2xl text-sm">
+                    <i class="fas fa-sliders-h w-5 text-center"></i> Setup & Audios
                 </button>
-                <div id="test-nav" class="opacity-30 pointer-events-none transition-all duration-500">
-                    <button id="nav-listening" onclick="cambiarVista('listening')" class="w-full text-left px-8 py-5 hover:bg-sky-50 flex items-center gap-4 transition-all text-slate-600 font-bold mb-2 rounded-r-3xl">
-                        <i class="fas fa-headphones-alt text-sky-500 text-lg w-6 text-center"></i> 1. Listening
+                <div id="test-nav" class="opacity-30 pointer-events-none transition-all duration-300">
+                    <button id="nav-listening" onclick="cambiarVista('listening')" class="w-full text-left px-6 py-4 hover:bg-sky-50 flex items-center gap-3 transition-all text-slate-600 font-bold mb-1 rounded-r-2xl text-sm">
+                        <i class="fas fa-headphones-alt text-sky-500 w-5 text-center"></i> 1. Listening
                     </button>
-                    <button id="nav-structure" onclick="cambiarVista('structure')" class="w-full text-left px-8 py-5 hover:bg-sky-50 flex items-center gap-4 transition-all text-slate-600 font-bold mb-2 rounded-r-3xl">
-                        <i class="fas fa-pen-nib text-teal-500 text-lg w-6 text-center"></i> 2. Structure
+                    <button id="nav-structure" onclick="cambiarVista('structure')" class="w-full text-left px-6 py-4 hover:bg-sky-50 flex items-center gap-3 transition-all text-slate-600 font-bold mb-1 rounded-r-2xl text-sm">
+                        <i class="fas fa-pen-nib text-teal-500 w-5 text-center"></i> 2. Structure
                     </button>
-                    <button id="nav-reading" onclick="cambiarVista('reading')" class="w-full text-left px-8 py-5 hover:bg-sky-50 flex items-center gap-4 transition-all text-slate-600 font-bold mb-2 rounded-r-3xl">
-                        <i class="fas fa-book-open text-indigo-500 text-lg w-6 text-center"></i> 3. Reading
+                    <button id="nav-reading" onclick="cambiarVista('reading')" class="w-full text-left px-6 py-4 hover:bg-sky-50 flex items-center gap-3 transition-all text-slate-600 font-bold mb-1 rounded-r-2xl text-sm">
+                        <i class="fas fa-book-open text-indigo-500 w-5 text-center"></i> 3. Reading
                     </button>
                 </div>
             </nav>
-            <div id="mini-score" class="hidden p-8 bg-slate-900 text-white m-6 rounded-[2.5rem] shadow-2xl">
-                <p class="text-[10px] font-black uppercase opacity-60 tracking-widest mb-3">Aciertos Acumulados</p>
+            <div id="mini-score" class="hidden p-6 bg-slate-900 text-white m-4 rounded-[1.5rem] shadow-lg">
+                <p class="text-[9px] font-black uppercase opacity-60 tracking-widest mb-2">Aciertos Acumulados</p>
                 <div class="flex items-end justify-between">
-                    <span id="mini-correct" class="text-4xl font-black text-sky-400">0</span>
-                    <i class="fas fa-chart-line text-2xl opacity-30"></i>
+                    <span id="mini-correct" class="text-3xl font-black text-sky-400">0</span>
+                    <i class="fas fa-chart-line text-xl opacity-30"></i>
                 </div>
             </div>
         </aside>
 
         <!-- MAIN WORKSPACE -->
-        <main class="flex-1 overflow-y-auto p-10 relative">
-            <div class="max-w-5xl mx-auto">
+        <main class="flex-1 overflow-y-auto p-6 md:p-8 relative">
+            <div class="max-w-4xl mx-auto">
 
                 <!-- CONFIGURACIÓN Y SELECCIÓN DE TEST -->
-                <div id="view-setup" class="space-y-12 fade-in">
-                    <div class="text-center py-8">
-                        <h2 class="text-5xl font-black text-slate-900 tracking-tighter mb-4">Elige tu Desafío 🎯</h2>
-                        <p class="text-slate-500 text-lg font-medium">Sube tus audios una vez, nosotros los recordamos por ti.</p>
+                <div id="view-setup" class="space-y-8 fade-in">
+                    <div class="text-center py-4">
+                        <h2 class="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter mb-2">Elige tu Desafío 🎯</h2>
+                        <p class="text-slate-500 text-sm md:text-base font-medium">Sube tus audios una vez, nosotros los recordamos por ti.</p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- TEST A -->
-                        <div class="glass-card p-10 rounded-[3rem] border-4 border-white transition-all hover:-translate-y-2 hover:shadow-2xl">
-                            <div class="flex justify-between items-start mb-6">
-                                <div class="w-16 h-16 vibrant-gradient-a rounded-3xl flex items-center justify-center text-white text-3xl shadow-lg shadow-sky-200"><i class="fas fa-star"></i></div>
-                                <div id="display-a" class="bg-slate-100 text-slate-500 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-slate-200">Falta Audio</div>
+                        <div class="glass-card p-6 md:p-8 rounded-[2rem] border-2 border-white transition-all hover:-translate-y-1 hover:shadow-xl">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-12 h-12 vibrant-gradient-a rounded-2xl flex items-center justify-center text-white text-2xl shadow-md shadow-sky-200"><i class="fas fa-star"></i></div>
+                                <div id="display-a" class="bg-slate-100 text-slate-500 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border border-slate-200">Falta Audio</div>
                             </div>
-                            <h3 class="text-3xl font-black mb-3 text-slate-800">Practice Test A</h3>
-                            <div class="bg-sky-50 rounded-2xl p-4 mb-6 border border-sky-100 text-sm text-sky-800">
-                                <p class="mb-2"><b>🎯 Enfoque:</b> Diagnóstico general. Ideal para medir tu nivel base hoy.</p>
-                                <p><b>⏱️ Tiempo Estimado:</b> ~115 minutos totales.</p>
+                            <h3 class="text-2xl font-black mb-2 text-slate-800">Practice Test A</h3>
+                            <div class="bg-sky-50 rounded-xl p-3 mb-4 border border-sky-100 text-xs text-sky-800">
+                                <p class="mb-1"><b>🎯 Enfoque:</b> Diagnóstico general.</p>
+                                <p><b>⏱️ Tiempo Estimado:</b> ~115 min.</p>
                             </div>
-                            <input type="file" id="file-a" accept="audio/*" class="text-xs mb-6 block w-full file:bg-slate-800 file:text-white file:border-0 file:px-4 file:py-2 file:rounded-xl file:cursor-pointer file:font-bold">
-                            <button onclick="elegirTest('testA')" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-sky-600 transition-colors shadow-lg">Seleccionar Test A</button>
+                            <input type="file" id="file-a" accept="audio/*" class="text-[10px] mb-4 block w-full file:bg-slate-800 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg file:cursor-pointer file:font-bold">
+                            <button onclick="elegirTest('testA')" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-sky-600 transition-colors shadow-md">Seleccionar Test A</button>
                         </div>
 
                         <!-- TEST B -->
-                        <div class="glass-card p-10 rounded-[3rem] border-4 border-white transition-all hover:-translate-y-2 hover:shadow-2xl">
-                            <div class="flex justify-between items-start mb-6">
-                                <div class="w-16 h-16 vibrant-gradient-b rounded-3xl flex items-center justify-center text-white text-3xl shadow-lg shadow-indigo-200"><i class="fas fa-fire"></i></div>
-                                <div id="display-b" class="bg-slate-100 text-slate-500 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-slate-200">Falta Audio</div>
+                        <div class="glass-card p-6 md:p-8 rounded-[2rem] border-2 border-white transition-all hover:-translate-y-1 hover:shadow-xl">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="w-12 h-12 vibrant-gradient-b rounded-2xl flex items-center justify-center text-white text-2xl shadow-md shadow-indigo-200"><i class="fas fa-fire"></i></div>
+                                <div id="display-b" class="bg-slate-100 text-slate-500 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border border-slate-200">Falta Audio</div>
                             </div>
-                            <h3 class="text-3xl font-black mb-3 text-slate-800">Practice Test B</h3>
-                            <div class="bg-indigo-50 rounded-2xl p-4 mb-6 border border-indigo-100 text-sm text-indigo-800">
-                                <p class="mb-2"><b>🎯 Enfoque:</b> Nivel avanzado. Diálogos y conferencias más desafiantes.</p>
-                                <p><b>⏱️ Tiempo Estimado:</b> ~115 minutos totales.</p>
+                            <h3 class="text-2xl font-black mb-2 text-slate-800">Practice Test B</h3>
+                            <div class="bg-indigo-50 rounded-xl p-3 mb-4 border border-indigo-100 text-xs text-indigo-800">
+                                <p class="mb-1"><b>🎯 Enfoque:</b> Nivel avanzado. Diálogos complejos.</p>
+                                <p><b>⏱️ Tiempo Estimado:</b> ~115 min.</p>
                             </div>
-                            <input type="file" id="file-b" accept="audio/*" class="text-xs mb-6 block w-full file:bg-slate-800 file:text-white file:border-0 file:px-4 file:py-2 file:rounded-xl file:cursor-pointer file:font-bold">
-                            <button onclick="elegirTest('testB')" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-indigo-600 transition-colors shadow-lg">Seleccionar Test B</button>
+                            <input type="file" id="file-b" accept="audio/*" class="text-[10px] mb-4 block w-full file:bg-slate-800 file:text-white file:border-0 file:px-3 file:py-1.5 file:rounded-lg file:cursor-pointer file:font-bold">
+                            <button onclick="elegirTest('testB')" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-indigo-600 transition-colors shadow-md">Seleccionar Test B</button>
                         </div>
                     </div>
 
                     <!-- TUTOR MODE -->
-                    <div class="bg-teal-900 p-8 rounded-[3rem] shadow-2xl flex items-center justify-between mt-10">
-                        <div class="flex items-center gap-6">
-                            <div class="bg-teal-800 text-teal-300 w-16 h-16 rounded-3xl flex items-center justify-center text-3xl"><i class="fas fa-brain"></i></div>
+                    <div class="bg-teal-900 p-6 md:p-8 rounded-[2rem] shadow-xl flex items-center justify-between mt-6">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-teal-800 text-teal-300 w-12 h-12 rounded-2xl flex items-center justify-center text-2xl hidden md:flex"><i class="fas fa-brain"></i></div>
                             <div>
-                                <h4 class="text-white font-black text-xl mb-1">Modo Tutoría Activado 🎓</h4>
-                                <p class="text-teal-300 text-sm font-medium">Recibe la explicación lógica de cada respuesta al momento de contestar.</p>
+                                <h4 class="text-white font-black text-lg mb-0.5">Modo Tutoría 🎓</h4>
+                                <p class="text-teal-300 text-xs font-medium">Recibe la explicación al instante.</p>
                             </div>
                         </div>
-                        <button id="tutor-toggle" onclick="toggleTutor()" class="vibrant-success text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg hover:scale-105 transition-transform">Activado</button>
+                        <button id="tutor-toggle" onclick="toggleTutor()" class="vibrant-success text-white px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-md hover:scale-105 transition-transform">Activado</button>
                     </div>
                 </div>
 
                 <!-- DIRECTIONS VIEW -->
                 <div id="view-directions" class="hidden-section fade-in">
-                    <div class="bg-white p-16 rounded-[4rem] shadow-2xl border border-slate-100">
-                        <h2 class="text-5xl font-black text-slate-900 mb-4 tracking-tighter">DIRECTIONS 📢</h2>
-                        <div id="dir-text" class="text-slate-600 text-lg leading-relaxed space-y-6 mb-12"></div>
+                    <div class="bg-white p-8 md:p-12 rounded-[3rem] shadow-xl border border-slate-100">
+                        <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tighter">DIRECTIONS 📢</h2>
+                        <div id="dir-text" class="text-slate-600 text-base leading-relaxed space-y-4 mb-8"></div>
                         <div class="flex justify-end">
-                            <button onclick="finalizarDirections()" class="bg-sky-600 text-white px-14 py-6 rounded-3xl font-black text-xl hover:bg-sky-700 hover:-translate-y-1 transition-all shadow-xl shadow-sky-200">ENTENDIDO, COMENZAR 🚀</button>
+                            <button onclick="finalizarDirections()" class="bg-sky-600 text-white px-10 py-4 rounded-2xl font-black text-lg hover:bg-sky-700 hover:-translate-y-1 transition-all shadow-lg shadow-sky-200">COMENZAR 🚀</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- TEST VIEW -->
-                <div id="view-test" class="hidden-section space-y-10 pb-32 fade-in">
-                    <div class="bg-slate-900 text-white p-12 rounded-[3.5rem] shadow-2xl flex justify-between items-center border-b-8 border-slate-800">
+                <div id="view-test" class="hidden-section space-y-8 pb-20 fade-in">
+                    <div class="bg-slate-900 text-white p-8 md:p-10 rounded-[2.5rem] shadow-xl flex justify-between items-center border-b-4 border-slate-800">
                         <div>
-                            <h2 id="live-sec-title" class="text-4xl font-black uppercase tracking-tighter mb-2">Listening</h2>
-                            <p id="live-sec-meta" class="text-xs font-black text-sky-400 uppercase tracking-[0.2em]"></p>
+                            <h2 id="live-sec-title" class="text-2xl md:text-3xl font-black uppercase tracking-tighter mb-1">Listening</h2>
+                            <p id="live-sec-meta" class="text-[10px] font-black text-sky-400 uppercase tracking-[0.2em]"></p>
                         </div>
-                        <div id="audio-panel" class="hidden flex flex-col items-center gap-3">
-                            <audio id="audio-player" class="w-80 h-10"></audio>
-                            <span class="text-[11px] font-black text-amber-400 uppercase tracking-widest bg-amber-400/10 px-4 py-1 rounded-full border border-amber-400/20">REPETICIÓN: <span id="reps-label">1 / 2</span></span>
+                        <div id="audio-panel" class="hidden flex flex-col items-center gap-2">
+                            <audio id="audio-player" class="w-64 h-8"></audio>
+                            <span class="text-[9px] font-black text-amber-400 uppercase tracking-widest bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">REPETICIÓN: <span id="reps-label">1 / 2</span></span>
                         </div>
                     </div>
                     
-                    <div id="q-box" class="grid grid-cols-1 gap-10"></div>
+                    <div id="q-box" class="grid grid-cols-1 gap-6"></div>
                     
-                    <div class="flex justify-between items-center bg-white p-8 rounded-[3rem] shadow-xl border border-slate-100">
-                        <button id="p-btn" onclick="navegarPasos(-1)" class="text-slate-400 px-10 py-5 font-black uppercase text-sm disabled:opacity-20 hover:text-slate-800 transition-colors">Atrás</button>
-                        <div class="flex-1 mx-12 h-3 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="flex justify-between items-center bg-white p-6 rounded-[2rem] shadow-lg border border-slate-100">
+                        <button id="p-btn" onclick="navegarPasos(-1)" class="text-slate-400 px-6 py-3 font-black uppercase text-xs disabled:opacity-20 hover:text-slate-800 transition-colors">Atrás</button>
+                        <div class="flex-1 mx-6 h-2.5 bg-slate-100 rounded-full overflow-hidden">
                             <div id="p-bar" class="h-full vibrant-gradient-a transition-all duration-500" style="width: 0%"></div>
                         </div>
-                        <button id="n-btn" onclick="navegarPasos(1)" class="bg-slate-900 text-white px-16 py-6 rounded-3xl font-black uppercase text-sm tracking-widest hover:bg-sky-600 transition-all shadow-lg">Siguiente</button>
+                        <button id="n-btn" onclick="navegarPasos(1)" class="bg-slate-900 text-white px-8 py-3.5 rounded-xl font-black uppercase text-xs tracking-widest hover:bg-sky-600 transition-all shadow-md">Siguiente</button>
                     </div>
                 </div>
 
                 <!-- RESULTADOS -->
                 <div id="view-results" class="hidden-section fade-in">
-                    <div class="glass-card p-16 rounded-[4rem] shadow-2xl border-4 border-white text-center">
-                        <div class="text-8xl mb-8">🏆</div>
-                        <h2 class="text-5xl font-black text-slate-900 mb-4">¡Simulacro Completado!</h2>
-                        <p class="text-slate-500 text-lg mb-10">Este es tu desempeño calculado según la escala oficial ITP.</p>
+                    <div class="glass-card p-8 md:p-12 rounded-[3rem] shadow-xl border-2 border-white text-center">
+                        <div class="text-6xl mb-6">🏆</div>
+                        <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-3">¡Simulacro Completado!</h2>
+                        <p class="text-slate-500 text-sm md:text-base mb-8">Este es tu desempeño calculado según la escala oficial ITP.</p>
                         
-                        <div class="bg-slate-900 text-white p-14 rounded-[3.5rem] mb-12 shadow-2xl relative overflow-hidden">
-                            <div class="absolute -right-20 -top-20 w-64 h-64 bg-sky-500/20 rounded-full blur-3xl"></div>
-                            <p class="text-sm font-black uppercase opacity-60 tracking-[0.3em] mb-4">Puntaje Estimado</p>
-                            <h3 id="final-score" class="text-9xl font-black mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-sky-300 to-white">---</h3>
-                            <div id="final-level" class="vibrant-gradient-b text-white px-10 py-3 rounded-full inline-block font-black text-2xl uppercase tracking-widest shadow-lg">Nivel MCER: ---</div>
+                        <div class="bg-slate-900 text-white p-10 rounded-[2.5rem] mb-10 shadow-xl relative overflow-hidden">
+                            <div class="absolute -right-10 -top-10 w-40 h-40 bg-sky-500/20 rounded-full blur-2xl"></div>
+                            <p class="text-[10px] font-black uppercase opacity-60 tracking-[0.3em] mb-3">Puntaje Estimado</p>
+                            <h3 id="final-score" class="text-7xl md:text-8xl font-black mb-5 tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-sky-300 to-white">---</h3>
+                            <div id="final-level" class="vibrant-gradient-b text-white px-8 py-2.5 rounded-full inline-block font-black text-lg uppercase tracking-widest shadow-md">Nivel MCER: ---</div>
                         </div>
                         
-                        <button onclick="window.location.reload()" class="bg-slate-100 text-slate-800 px-14 py-6 rounded-3xl font-black text-xl hover:bg-slate-200 transition-all">Finalizar y Salir</button>
+                        <button onclick="window.location.reload()" class="bg-slate-100 text-slate-800 px-10 py-4 rounded-2xl font-black text-base hover:bg-slate-200 transition-all">Finalizar y Salir</button>
                     </div>
                 </div>
 
@@ -240,24 +238,24 @@
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Protección de variables globales y de entorno
+        // Protección de variables
         let app, auth, db, user;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'toefl-speed-pro-v4';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'toefl-speed-pro-v5';
         
-        // Datos y estado de la app
         let examData = null;
         let currentTest = null;
         let session = { section: 'listening', step: 0, answers: {}, tutor: true };
-        const localAudios = { testA: null, testB: null };
         
-        // Control de Audio y Tiempos
+        // Memoria local robusta para audios
+        const localAudios = { testA: null, testB: null };
+        window.audioDB = null;
+        
         let repsCount = 0;
         let audioEndTime = 0;
         let qTimerInt;
         let qTimeLeft = 0;
         let generalTimerInt;
 
-        // Tabla oficial conversión TOEFL
         const conversionTable = [
             { range: [48, 50], s1: [64, 68], s2: [63, 68], s3: [65, 67] },
             { range: [45, 47], s1: [59, 62], s2: [59, 61], s3: [62, 64] },
@@ -277,7 +275,10 @@
         ];
 
         window.onload = async () => {
-            // Fallback de seguridad por si falla la red o Firebase
+            // Asignar Event Listeners de Audio DE INMEDIATO (Independiente de IndexedDB)
+            document.getElementById('file-a').addEventListener('change', e => procesarAudioSubido(e, 'testA'));
+            document.getElementById('file-b').addEventListener('change', e => procesarAudioSubido(e, 'testB'));
+
             const loadTimeout = setTimeout(() => {
                 if(!examData) initFallbackData();
                 document.getElementById('loading-screen').classList.add('hidden');
@@ -304,9 +305,8 @@
                 const res = await fetch('examen_data.json');
                 const data = await res.json();
                 
-                // VALIDACIÓN CRÍTICA DEL JSON: Si el usuario pegó el JSON de frases, lo detectamos
                 if(!data.testA || !data.testA.listening) {
-                    console.error("El JSON no tiene la estructura TOEFL. Usando Fallback de seguridad.");
+                    console.error("El JSON no tiene la estructura TOEFL. Usando Fallback.");
                     initFallbackData();
                 } else {
                     examData = data;
@@ -324,14 +324,68 @@
             setupAudioLogic();
         };
 
-        // --- DATOS DE RESPALDO (Por si el JSON falla) ---
+        // --- GESTIÓN ROBUSTA DE AUDIOS ---
+        function procesarAudioSubido(e, testKey) {
+            const file = e.target.files[0];
+            if(file) {
+                // Guardar en memoria inmediatamente (Esto evita el bug de "Falta Audio")
+                localAudios[testKey] = file;
+                updateBadge(testKey, true);
+                
+                // Intentar guardar en IndexedDB en segundo plano
+                if(window.audioDB) {
+                    try {
+                        const tx = window.audioDB.transaction("files", "readwrite");
+                        tx.objectStore("files").put(file, testKey);
+                    } catch(err) { console.warn("No se pudo guardar en IndexedDB, pero el audio funcionará esta sesión."); }
+                }
+            }
+        }
+
+        function initAudioStorage() {
+            try {
+                const req = indexedDB.open("ToeflAudioDB_v3", 1);
+                req.onupgradeneeded = e => {
+                    const idb = e.target.result;
+                    if (!idb.objectStoreNames.contains("files")) {
+                        idb.createObjectStore("files");
+                    }
+                };
+                req.onsuccess = e => {
+                    window.audioDB = e.target.result;
+                    ['testA', 'testB'].forEach(k => {
+                        try {
+                            const tx = window.audioDB.transaction("files", "readonly");
+                            const res = tx.objectStore("files").get(k);
+                            res.onsuccess = () => { 
+                                if (res.result) { 
+                                    localAudios[k] = res.result; 
+                                    updateBadge(k, true); 
+                                } 
+                            };
+                        } catch(err) {}
+                    });
+                };
+            } catch(e) {
+                console.warn("IndexedDB bloqueado por el navegador. Los audios se borrarán al recargar la página.");
+            }
+        }
+
+        function updateBadge(k, ok) {
+            const el = document.getElementById(`display-${k.slice(-1).toLowerCase()}`);
+            if (el) { 
+                el.innerText = ok ? "Audio Cargado ✅" : "Falta Audio"; 
+                el.className = ok ? "glow-success bg-teal-50 text-teal-600 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border border-teal-200" : "bg-slate-100 text-slate-500 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border border-slate-200"; 
+            }
+        }
+
+        // --- DATOS DE RESPALDO ---
         function initFallbackData() {
             examData = {
                 testA: {
                     listening: [
                         { id: 1, pregunta: "1. What does the woman imply?", opciones: ["(A) She lost it.", "(B) Lend it.", "(C) Under the book.", "(D) No time."], correcta: "C", explicacion: "Sugiere buscar debajo del cuaderno.", timestamp: "01:46" },
-                        { id: 2, pregunta: "2. What does the man suggest?", opciones: ["(A) Work", "(B) Add course", "(C) Find job", "(D) Take it in summer"], correcta: "D", explicacion: "Sugiere tomarlo en el verano.", timestamp: "02:02" },
-                        { id: 3, pregunta: "3. What does the woman imply?", opciones: ["(A) Work home", "(B) Use lab weekend", "(C) Repeat", "(D) Forgot key"], correcta: "B", explicacion: "El laboratorio abre el fin de semana.", timestamp: "02:18" }
+                        { id: 2, pregunta: "2. What does the man suggest?", opciones: ["(A) Work", "(B) Add course", "(C) Find job", "(D) Take it in summer"], correcta: "D", explicacion: "Sugiere tomarlo en el verano.", timestamp: "02:02" }
                     ],
                     structure: [
                         { id: 1, pregunta: "1. The Impressionists came to the conclusion _____ not really black.", opciones: ["(A) which was", "(B) was shadows", "(C) were shadows", "(D) that shadows were"], correcta: "D", explicacion: "Requiere cláusula 'that'." }
@@ -342,44 +396,7 @@
                 },
                 testB: { listening: [], structure: [], reading: [] }
             };
-            alert("⚠️ Se ha cargado una base de datos de respaldo parcial. Por favor, asegúrate de que el archivo examen_data.json tenga la estructura TOEFL correcta.");
-        }
-
-        // --- GESTIÓN DE AUDIOS ---
-        function initAudioStorage() {
-            const req = indexedDB.open("ToeflAudioDB", 1);
-            req.onupgradeneeded = e => e.target.result.createObjectStore("files");
-            req.onsuccess = e => {
-                const idb = e.target.result;
-                ['testA', 'testB'].forEach(async (k) => {
-                    const tx = idb.transaction("files", "readonly");
-                    const res = tx.objectStore("files").get(k);
-                    res.onsuccess = () => { 
-                        if (res.result) { 
-                            localAudios[k] = res.result; 
-                            updateBadge(k, true); 
-                        } 
-                    };
-                });
-                document.getElementById('file-a').onchange = ev => storeAudio(idb, 'testA', ev.target.files[0]);
-                document.getElementById('file-b').onchange = ev => storeAudio(idb, 'testB', ev.target.files[0]);
-            };
-        }
-
-        function storeAudio(db, k, f) {
-            if (!f) return;
-            const tx = db.transaction("files", "readwrite");
-            tx.objectStore("files").put(f, k);
-            localAudios[k] = f;
-            updateBadge(k, true);
-        }
-
-        function updateBadge(k, ok) {
-            const el = document.getElementById(`display-${k.slice(-1).toLowerCase()}`);
-            if (el) { 
-                el.innerText = ok ? "Audio Cargado ✅" : "Falta Audio"; 
-                el.className = ok ? "glow-success bg-teal-50 text-teal-600 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-teal-200" : "bg-slate-100 text-slate-500 px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-slate-200"; 
-            }
+            alert("⚠️ Se cargó base de datos de respaldo parcial. Revisa tu archivo examen_data.json.");
         }
 
         // --- NAVEGACIÓN PRINCIPAL ---
@@ -408,16 +425,16 @@
             const player = document.getElementById('audio-player');
             if (session.section === 'listening') {
                 box.innerHTML = `
-                    <div class="bg-sky-50 p-8 rounded-3xl border border-sky-100 flex items-center gap-6">
-                        <i class="fas fa-play-circle text-sky-500 text-4xl"></i>
-                        <p class="font-bold text-sky-800">El audio de instrucciones está sonando. Una vez que inicies el test, cada diálogo se repetirá <b>exactamente 2 veces</b> y se detendrá para que respondas.</p>
+                    <div class="bg-sky-50 p-6 rounded-2xl border border-sky-100 flex items-center gap-4">
+                        <i class="fas fa-play-circle text-sky-500 text-3xl"></i>
+                        <p class="font-bold text-sky-800 text-sm">El audio de instrucciones está sonando. En el test, cada diálogo se repetirá <b>exactamente 2 veces</b>.</p>
                     </div>
                 `;
                 player.src = URL.createObjectURL(localAudios[currentTest]); 
                 player.currentTime = 0; 
                 player.play();
             } else {
-                box.innerHTML = `<p class="font-bold text-xl text-slate-700">Sección teórica. El temporizador de velocidad estará activo para ayudarte a mejorar tus tiempos.</p>`;
+                box.innerHTML = `<p class="font-bold text-lg text-slate-700">Sección teórica. El temporizador de velocidad estará activo.</p>`;
                 player.pause();
             }
         }
@@ -429,18 +446,17 @@
             
             if (session.section === 'listening') {
                 document.getElementById('audio-panel').classList.remove('hidden');
-                // El renderizado configurará el inicio del audio
             } else { document.getElementById('audio-panel').classList.add('hidden'); }
             
             renderBlock();
             iniciarRelojGeneral(session.section === 'listening' ? 35 : (session.section === 'structure' ? 25 : 55));
         };
 
-        // --- LÓGICA DE PREGUNTAS Y TIMER DE VELOCIDAD ---
+        // --- LÓGICA DE PREGUNTAS Y TIMER ---
         function renderBlock() {
             const box = document.getElementById('q-box'); box.innerHTML = '';
             const data = examData[currentTest][session.section];
-            if (!data || data.length === 0) { box.innerHTML = '<p>No hay datos para esta sección.</p>'; return; }
+            if (!data || data.length === 0) { box.innerHTML = '<p>No hay datos.</p>'; return; }
             
             const start = session.step * 2;
             const slice = data.slice(start, start + 2);
@@ -449,22 +465,22 @@
             
             slice.forEach(q => {
                 const card = document.createElement('div');
-                card.className = "bg-white p-10 rounded-[3rem] border border-slate-100 shadow-xl fade-in";
+                card.className = "bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-md fade-in";
                 card.innerHTML = `
-                    <div class="flex justify-between border-b border-slate-50 pb-6 mb-6">
-                        <div class="flex gap-4 items-center">
-                            <span class="bg-slate-900 text-white w-10 h-10 flex items-center justify-center rounded-xl font-black">${q.id}</span>
-                            <span class="font-black text-lg text-slate-800">${q.pregunta || 'Select answer:'}</span>
+                    <div class="flex justify-between border-b border-slate-50 pb-4 mb-5">
+                        <div class="flex gap-3 items-center">
+                            <span class="bg-slate-900 text-white w-8 h-8 flex items-center justify-center rounded-lg font-black text-sm">${q.id}</span>
+                            <span class="font-black text-base text-slate-800">${q.pregunta || 'Select answer:'}</span>
                         </div>
                     </div>
-                    <div class="grid gap-4">
+                    <div class="grid gap-3">
                         ${q.opciones.map((op, i) => `
-                            <label class="flex items-center p-5 rounded-2xl border-2 border-slate-50 hover:bg-sky-50 cursor-pointer group" id="l-${q.id}-${['A','B','C','D'][i]}">
+                            <label class="flex items-center p-3.5 rounded-xl border-2 border-slate-50 hover:bg-sky-50 cursor-pointer group" id="l-${q.id}-${['A','B','C','D'][i]}">
                                 <input type="radio" name="q-${q.id}" class="toefl-radio" onchange="chk(${q.id}, '${['A','B','C','D'][i]}')">
-                                <span class="ml-4 font-bold text-slate-600 group-hover:text-slate-900">${op}</span>
+                                <span class="ml-3 font-bold text-sm text-slate-600 group-hover:text-slate-900">${op}</span>
                             </label>`).join('')}
                     </div>
-                    <div id="f-${q.id}" class="mt-6 p-6 rounded-2xl hidden"></div>`;
+                    <div id="f-${q.id}" class="mt-4 p-4 rounded-xl hidden text-sm"></div>`;
                 box.appendChild(card);
             });
             
@@ -472,7 +488,7 @@
             startSpeedTimer();
         }
 
-        // --- LÓGICA DE AUDIO (REPRODUCCIÓN DOBLE EXACTA) ---
+        // --- REPRODUCCIÓN DOBLE EXACTA ---
         function setupAudioLogic() {
             const player = document.getElementById('audio-player');
             player.addEventListener('timeupdate', () => {
@@ -480,16 +496,14 @@
                 
                 if (player.currentTime >= audioEndTime) {
                     player.pause();
-                    if (repsCount < 1) { // Aún falta la segunda repetición
+                    if (repsCount < 1) { 
                         repsCount++;
                         document.getElementById('reps-label').innerText = "2 / 2";
-                        // Reiniciar al inicio del fragmento actual
                         const data = examData[currentTest][session.section];
                         const qStart = data[session.step * 2];
                         player.currentTime = parseTime(qStart.timestamp);
                         player.play();
                     } else {
-                        // Terminó las 2 repeticiones, limpiar variables
                         audioEndTime = 0;
                     }
                 }
@@ -500,12 +514,11 @@
             if(session.section !== 'listening') return;
             const player = document.getElementById('audio-player');
             const qStart = data[startIndex];
-            const qNext = data[startIndex + count]; // La primera pregunta de la SIGUIENTE página
+            const qNext = data[startIndex + count]; 
             
             if(!qStart || !qStart.timestamp) return;
             
             const startT = parseTime(qStart.timestamp);
-            // Si hay siguiente pregunta, el fin es el inicio de esa. Si no, le damos 35s de margen.
             audioEndTime = (qNext && qNext.timestamp) ? parseTime(qNext.timestamp) : startT + 35;
             
             repsCount = 0;
@@ -516,10 +529,8 @@
 
         function startSpeedTimer() {
             clearInterval(qTimerInt);
-            // Tiempo oficial por sección / num preguntas, menos 12 segundos.
-            // Ej. Estructura: (25*60)/40 = 37.5s. Menos 12 = 25.5s por pregunta. Por 2 = 51s la página.
             const timesPerQ = { listening: 30, structure: 25, reading: 54 };
-            qTimeLeft = timesPerQ[session.section] * 2; // Mostramos 2 por página
+            qTimeLeft = timesPerQ[session.section] * 2; 
             
             document.getElementById('q-timer-display').classList.remove('hidden');
             qTimerInt = setInterval(() => {
@@ -533,7 +544,7 @@
                 
                 if (qTimeLeft <= 0) { 
                     clearInterval(qTimerInt); 
-                    alert("⏱️ ¡Tiempo de velocidad agotado! Estás tardando más de lo ideal. Pasando a las siguientes preguntas."); 
+                    alert("⏱️ ¡Tiempo agotado! Pasando a las siguientes preguntas."); 
                     navegarPasos(1); 
                 }
             }, 1000);
@@ -547,10 +558,10 @@
                 const feed = document.getElementById(`f-${qid}`);
                 feed.classList.remove('hidden');
                 if (sel === q.correcta) { 
-                    feed.className = "mt-4 p-5 rounded-2xl bg-teal-50 text-teal-800 font-bold border border-teal-200"; 
+                    feed.className = "mt-4 p-4 rounded-xl bg-teal-50 text-teal-800 font-bold border border-teal-200 text-sm"; 
                     feed.innerHTML = `¡Correcto! ${q.explicacion}`; 
                 } else { 
-                    feed.className = "mt-4 p-5 rounded-2xl bg-rose-50 text-rose-800 font-bold border border-rose-200"; 
+                    feed.className = "mt-4 p-4 rounded-xl bg-rose-50 text-rose-800 font-bold border border-rose-200 text-sm"; 
                     feed.innerHTML = `Incorrecto. Era ${q.correcta}. ${q.explicacion}`; 
                 }
             }
@@ -606,7 +617,7 @@
             document.getElementById('final-level').innerText = `Nivel MCER: ${mcer}`;
         }
 
-        // --- FUNCIONES DE GUARDADO (CLOUD) ---
+        // --- FUNCIONES CLOUD Y UTILS ---
         async function checkSavedProgress() {
             if (!user || !db) return;
             try {
@@ -641,7 +652,6 @@
             window.location.reload();
         };
 
-        // --- UTILIDADES GLOBALES ---
         const parseTime = (ts) => { const p = ts.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); };
         function ocultarTodo() { ['view-setup', 'view-directions', 'view-test', 'view-results'].forEach(v => document.getElementById(v).classList.add('hidden-section')); }
         function iniciarRelojGeneral(m) { 
@@ -655,7 +665,7 @@
             session.tutor = !session.tutor; 
             const btn = document.getElementById('tutor-toggle');
             btn.innerText = session.tutor ? "Activado" : "Desactivado"; 
-            btn.className = session.tutor ? "vibrant-success text-white px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg hover:scale-105 transition-transform" : "bg-slate-200 text-slate-500 px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs";
+            btn.className = session.tutor ? "vibrant-success text-white px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-md hover:scale-105 transition-transform" : "bg-slate-200 text-slate-500 px-6 py-3 rounded-xl font-black uppercase tracking-widest text-[10px]";
         };
     </script>
 </body>
