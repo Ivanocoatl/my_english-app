@@ -319,13 +319,13 @@
 
             // Cargar tu JSON Exacto sin fallbacks invasivos
             try {
-                const res = await fetch('examen_data.json');
+                const res = await fetch('datos.json');
                 const data = await res.json();
                 examData = data; 
                 document.getElementById('loading-screen').classList.add('hidden'); // Ocultar inmediatamente al terminar
             } catch (e) {
-                console.error("Fallo al leer examen_data.json.", e);
-                alert("⚠️ Error: Asegúrate de que tu archivo examen_data.json esté disponible.");
+                console.error("Fallo al leer datos.json.", e);
+                alert("⚠️ Error: Asegúrate de que tu archivo datos.json esté disponible.");
                 document.getElementById('loading-screen').classList.add('hidden');
             }
 
@@ -388,6 +388,7 @@
 
         // --- NAVEGACIÓN PRINCIPAL ---
         window.elegirTest = (id) => {
+            if (!examData) return alert("⚠️ Error: No se ha cargado la base de datos (datos.json). Recarga la página o revisa el nombre del archivo.");
             if (!localAudios[id]) return alert("⚠️ Debes subir el archivo de audio MP3 para este test primero.");
             currentTest = id;
             document.getElementById('test-info-nav').innerText = id === 'testA' ? "Test A: Volume 3" : "Test B: Advanced";
@@ -533,8 +534,20 @@
 
         function startSpeedTimer() {
             clearInterval(qTimerInt);
-            const timesPerQ = { listening: 30, structure: 25, reading: 54 };
-            qTimeLeft = timesPerQ[session.section] * 2; 
+            
+            if (session.section === 'listening') {
+                const timings = audioTimings[currentTest];
+                if (timings && timings[session.step]) {
+                    const [startT, endT] = timings[session.step];
+                    // Para Listening: Tiempo total del audio (x2 repeticiones) + 24 segundos de margen (12s por pregunta)
+                    qTimeLeft = Math.ceil((endT - startT) * 2) + 24; 
+                } else {
+                    qTimeLeft = 60;
+                }
+            } else {
+                const timesPerQ = { structure: 25, reading: 54 };
+                qTimeLeft = timesPerQ[session.section] * 2; 
+            }
             
             document.getElementById('q-timer-display').classList.remove('hidden');
             qTimerInt = setInterval(() => {
