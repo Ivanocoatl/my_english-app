@@ -66,7 +66,7 @@
     <div id="loading-screen" class="absolute inset-0 bg-teal-50 z-[300] flex flex-col items-center justify-center">
         <div class="w-16 h-16 border-8 border-teal-200 border-t-teal-500 rounded-full animate-spin shadow-md"></div>
         <h2 class="mt-6 font-black text-teal-900 text-2xl tracking-tight">Preparando tu entorno... 🌟</h2>
-        <p class="text-teal-600 mt-2 font-bold text-sm">Cargando base de datos.</p>
+        <p class="text-teal-600 mt-2 font-bold text-sm">Sincronizando tus avances y base de datos.</p>
     </div>
 
     <!-- HUB DE BIENVENIDA -->
@@ -240,7 +240,7 @@
 
         // Protección de variables
         let app, auth, db, user;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'toefl-speed-pro-v5';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'toefl-speed-pro-v6';
         
         let examData = null;
         let currentTest = null;
@@ -252,9 +252,29 @@
         
         let repsCount = 0;
         let audioEndTime = 0;
+        let isDirections = false; // Flag para controlar las instrucciones
         let qTimerInt;
         let qTimeLeft = 0;
         let generalTimerInt;
+
+        // MAPEO EXACTO DE AUDIOS (Basado en la transcripción real que compartiste)
+        // Cada índice equivale a 1 paso (2 preguntas por página) [InicioSegundos, FinSegundos]
+        const audioTimings = {
+            testA: [
+                [143, 194], [194, 252], [252, 310], [310, 351], [351, 423],
+                [423, 480], [480, 532], [532, 591], [591, 649], [649, 704],
+                [704, 758], [758, 815], [815, 869], [869, 933], [933, 993],
+                [1043, 1158], [1158, 1191], [1191, 1330], [1330, 1654], [1654, 1691],
+                [1691, 1826], [1826, 1862], [1862, 1900], [1900, 2051], [2051, 2089]
+            ],
+            testB: [
+                [143, 191], [191, 245], [245, 302], [302, 358], [358, 416],
+                [416, 469], [469, 524], [524, 581], [581, 633], [633, 689],
+                [689, 753], [753, 810], [810, 867], [867, 927], [927, 983],
+                [1033, 1149], [1149, 1186], [1186, 1327], [1327, 1650], [1650, 1688],
+                [1688, 1832], [1832, 1877], [1877, 1909], [1909, 2047], [2047, 2080]
+            ]
+        };
 
         const conversionTable = [
             { range: [48, 50], s1: [64, 68], s2: [63, 68], s3: [65, 67] },
@@ -275,15 +295,11 @@
         ];
 
         window.onload = async () => {
-            // Asignar Event Listeners de Audio DE INMEDIATO (Independiente de IndexedDB)
+            // Asignar Event Listeners de Audio DE INMEDIATO
             document.getElementById('file-a').addEventListener('change', e => procesarAudioSubido(e, 'testA'));
             document.getElementById('file-b').addEventListener('change', e => procesarAudioSubido(e, 'testB'));
 
-            const loadTimeout = setTimeout(() => {
-                if(!examData) initFallbackData();
-                document.getElementById('loading-screen').classList.add('hidden');
-            }, 4000);
-
+            // Intentar conectar con Firebase
             try {
                 if(typeof __firebase_config !== 'undefined') {
                     const firebaseConfig = JSON.parse(__firebase_config);
@@ -299,24 +315,17 @@
                         if (u) { user = u; checkSavedProgress(); }
                     });
                 }
-            } catch(e) { console.warn("Firebase offline. Modo local activado."); }
+            } catch(e) { console.warn("Modo local activado."); }
 
+            // Cargar tu JSON Exacto sin fallbacks invasivos
             try {
                 const res = await fetch('examen_data.json');
                 const data = await res.json();
-                
-                if(!data.testA || !data.testA.listening) {
-                    console.error("El JSON no tiene la estructura TOEFL. Usando Fallback.");
-                    initFallbackData();
-                } else {
-                    examData = data;
-                }
-                clearTimeout(loadTimeout);
-                document.getElementById('loading-screen').classList.add('hidden');
+                examData = data; 
+                document.getElementById('loading-screen').classList.add('hidden'); // Ocultar inmediatamente al terminar
             } catch (e) {
-                console.warn("Fallo al leer examen_data.json. Usando Fallback.");
-                initFallbackData();
-                clearTimeout(loadTimeout);
+                console.error("Fallo al leer examen_data.json.", e);
+                alert("⚠️ Error: Asegúrate de que tu archivo examen_data.json esté disponible.");
                 document.getElementById('loading-screen').classList.add('hidden');
             }
 
@@ -328,16 +337,14 @@
         function procesarAudioSubido(e, testKey) {
             const file = e.target.files[0];
             if(file) {
-                // Guardar en memoria inmediatamente (Esto evita el bug de "Falta Audio")
                 localAudios[testKey] = file;
                 updateBadge(testKey, true);
                 
-                // Intentar guardar en IndexedDB en segundo plano
                 if(window.audioDB) {
                     try {
                         const tx = window.audioDB.transaction("files", "readwrite");
                         tx.objectStore("files").put(file, testKey);
-                    } catch(err) { console.warn("No se pudo guardar en IndexedDB, pero el audio funcionará esta sesión."); }
+                    } catch(err) { console.warn("No se pudo guardar en IndexedDB permanente."); }
                 }
             }
         }
@@ -367,7 +374,7 @@
                     });
                 };
             } catch(e) {
-                console.warn("IndexedDB bloqueado por el navegador. Los audios se borrarán al recargar la página.");
+                console.warn("IndexedDB bloqueado por el navegador.");
             }
         }
 
@@ -377,26 +384,6 @@
                 el.innerText = ok ? "Audio Cargado ✅" : "Falta Audio"; 
                 el.className = ok ? "glow-success bg-teal-50 text-teal-600 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border border-teal-200" : "bg-slate-100 text-slate-500 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border border-slate-200"; 
             }
-        }
-
-        // --- DATOS DE RESPALDO ---
-        function initFallbackData() {
-            examData = {
-                testA: {
-                    listening: [
-                        { id: 1, pregunta: "1. What does the woman imply?", opciones: ["(A) She lost it.", "(B) Lend it.", "(C) Under the book.", "(D) No time."], correcta: "C", explicacion: "Sugiere buscar debajo del cuaderno.", timestamp: "01:46" },
-                        { id: 2, pregunta: "2. What does the man suggest?", opciones: ["(A) Work", "(B) Add course", "(C) Find job", "(D) Take it in summer"], correcta: "D", explicacion: "Sugiere tomarlo en el verano.", timestamp: "02:02" }
-                    ],
-                    structure: [
-                        { id: 1, pregunta: "1. The Impressionists came to the conclusion _____ not really black.", opciones: ["(A) which was", "(B) was shadows", "(C) were shadows", "(D) that shadows were"], correcta: "D", explicacion: "Requiere cláusula 'that'." }
-                    ],
-                    reading: [
-                        { id: 1, pregunta: "1. What is mainly discussed?", opciones: ["(A) Women", "(B) Manufacturing", "(C) Settlement patterns", "(D) Mechanization"], correcta: "C", explicacion: "Habla sobre asentamientos." }
-                    ]
-                },
-                testB: { listening: [], structure: [], reading: [] }
-            };
-            alert("⚠️ Se cargó base de datos de respaldo parcial. Revisa tu archivo examen_data.json.");
         }
 
         // --- NAVEGACIÓN PRINCIPAL ---
@@ -432,7 +419,9 @@
                 `;
                 player.src = URL.createObjectURL(localAudios[currentTest]); 
                 player.currentTime = 0; 
-                player.play();
+                audioEndTime = 143; // Las instrucciones duran hasta el minuto 02:23 aproximadamente
+                isDirections = true;
+                player.play().catch(e => console.log(e));
             } else {
                 box.innerHTML = `<p class="font-bold text-lg text-slate-700">Sección teórica. El temporizador de velocidad estará activo.</p>`;
                 player.pause();
@@ -440,6 +429,7 @@
         }
 
         window.finalizarDirections = () => {
+            isDirections = false; // Ya no estamos en las instrucciones
             const player = document.getElementById('audio-player'); player.pause();
             ocultarTodo(); document.getElementById('view-test').classList.remove('hidden-section');
             document.getElementById('mini-score').classList.remove('hidden');
@@ -456,7 +446,7 @@
         function renderBlock() {
             const box = document.getElementById('q-box'); box.innerHTML = '';
             const data = examData[currentTest][session.section];
-            if (!data || data.length === 0) { box.innerHTML = '<p>No hay datos.</p>'; return; }
+            if (!data || data.length === 0) { box.innerHTML = '<p>No hay datos. Verifica tu archivo JSON.</p>'; return; }
             
             const start = session.step * 2;
             const slice = data.slice(start, start + 2);
@@ -484,11 +474,11 @@
                 box.appendChild(card);
             });
             
-            gestionarAudioDePagina(data, start, slice.length);
+            gestionarAudioDePagina();
             startSpeedTimer();
         }
 
-        // --- REPRODUCCIÓN DOBLE EXACTA ---
+        // --- REPRODUCCIÓN DOBLE EXACTA (USANDO EL MAPEO DE TIEMPOS) ---
         function setupAudioLogic() {
             const player = document.getElementById('audio-player');
             player.addEventListener('timeupdate', () => {
@@ -496,35 +486,49 @@
                 
                 if (player.currentTime >= audioEndTime) {
                     player.pause();
+                    
+                    if (isDirections) {
+                        // Si era solo la instrucción de inicio, no repetir
+                        audioEndTime = 0;
+                        return;
+                    }
+
                     if (repsCount < 1) { 
                         repsCount++;
                         document.getElementById('reps-label').innerText = "2 / 2";
-                        const data = examData[currentTest][session.section];
-                        const qStart = data[session.step * 2];
-                        player.currentTime = parseTime(qStart.timestamp);
-                        player.play();
+                        
+                        // Buscar en nuestro arreglo exacto
+                        const timings = audioTimings[currentTest];
+                        if(timings && timings[session.step]) {
+                            player.currentTime = timings[session.step][0];
+                            player.play().catch(e => console.log(e));
+                        }
                     } else {
+                        // Terminó de repetirse, pausar hasta que den en Siguiente
                         audioEndTime = 0;
                     }
                 }
             });
         }
 
-        function gestionarAudioDePagina(data, startIndex, count) {
+        function gestionarAudioDePagina() {
             if(session.section !== 'listening') return;
             const player = document.getElementById('audio-player');
-            const qStart = data[startIndex];
-            const qNext = data[startIndex + count]; 
+            const timings = audioTimings[currentTest];
+
+            if(!timings || !timings[session.step]) {
+                console.warn("No se encontró timing para esta pregunta.");
+                return;
+            }
             
-            if(!qStart || !qStart.timestamp) return;
-            
-            const startT = parseTime(qStart.timestamp);
-            audioEndTime = (qNext && qNext.timestamp) ? parseTime(qNext.timestamp) : startT + 35;
+            // Asignar el inicio y fin preestablecidos para esta página
+            const [startT, endT] = timings[session.step];
+            audioEndTime = endT;
             
             repsCount = 0;
             document.getElementById('reps-label').innerText = "1 / 2";
             player.currentTime = startT;
-            player.play();
+            player.play().catch(e => console.log(e));
         }
 
         function startSpeedTimer() {
@@ -652,7 +656,6 @@
             window.location.reload();
         };
 
-        const parseTime = (ts) => { const p = ts.split(':'); return parseInt(p[0]) * 60 + parseInt(p[1]); };
         function ocultarTodo() { ['view-setup', 'view-directions', 'view-test', 'view-results'].forEach(v => document.getElementById(v).classList.add('hidden-section')); }
         function iniciarRelojGeneral(m) { 
             clearInterval(generalTimerInt); let t = m * 60; 
