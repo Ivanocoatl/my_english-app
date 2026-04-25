@@ -194,7 +194,8 @@
                             <p id="live-sec-meta" class="text-[10px] font-black text-sky-400 uppercase tracking-[0.2em]"></p>
                         </div>
                         <div id="audio-panel" class="hidden flex flex-col items-center gap-2">
-                            <audio id="audio-player" class="w-64 h-8"></audio>
+                            <!-- Controles agregados para que puedas verificar que el audio funciona -->
+                            <audio id="audio-player" class="w-64 h-8" controls controlsList="nodownload"></audio>
                             <span class="text-[9px] font-black text-amber-400 uppercase tracking-widest bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">REPETICIÓN: <span id="reps-label">1 / 2</span></span>
                         </div>
                     </div>
@@ -240,7 +241,7 @@
 
         // Protección de variables
         let app, auth, db, user;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'toefl-speed-pro-v6';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'toefl-speed-pro-v7';
         
         let examData = null;
         let currentTest = null;
@@ -252,13 +253,12 @@
         
         let repsCount = 0;
         let audioEndTime = 0;
-        let isDirections = false; // Flag para controlar las instrucciones
+        let isDirections = false; 
         let qTimerInt;
         let qTimeLeft = 0;
         let generalTimerInt;
 
-        // MAPEO EXACTO DE AUDIOS (Basado en la transcripción real que compartiste)
-        // Cada índice equivale a 1 paso (2 preguntas por página) [InicioSegundos, FinSegundos]
+        // MAPEO EXACTO DE AUDIOS (2 preguntas por página)
         const audioTimings = {
             testA: [
                 [143, 194], [194, 252], [252, 310], [310, 351], [351, 423],
@@ -317,17 +317,30 @@
                 }
             } catch(e) { console.warn("Modo local activado."); }
 
-            // Cargar tu JSON Exacto sin fallbacks invasivos
-            try {
-                const res = await fetch('datos.json');
-                const data = await res.json();
-                examData = data; 
-                document.getElementById('loading-screen').classList.add('hidden'); // Ocultar inmediatamente al terminar
-            } catch (e) {
-                console.error("Fallo al leer datos.json.", e);
-                alert("⚠️ Error: Asegúrate de que tu archivo datos.json esté disponible.");
-                document.getElementById('loading-screen').classList.add('hidden');
+            // 🌟 NUEVO BUSCADOR INTELIGENTE DE ARCHIVOS JSON 🌟
+            let jsonLoaded = false;
+            const possibleFiles = ['datos.json', 'examen_data.json', 'examen_data - Copy.json'];
+            
+            for (let file of possibleFiles) {
+                try {
+                    const res = await fetch(file);
+                    if (res.ok) {
+                        examData = await res.json();
+                        jsonLoaded = true;
+                        console.log("✅ JSON cargado con éxito desde:", file);
+                        break;
+                    }
+                } catch (e) {
+                    console.log(`Buscando... ${file} no encontrado.`);
+                }
             }
+
+            if (!jsonLoaded) {
+                console.error("❌ No se pudo cargar ningún JSON.");
+                alert("⚠️ Error: No se ha podido cargar tu archivo de preguntas. Asegúrate de que el archivo se llame 'datos.json' o 'examen_data.json' y esté en la misma carpeta del html.");
+            }
+            
+            document.getElementById('loading-screen').classList.add('hidden');
 
             initAudioStorage();
             setupAudioLogic();
@@ -388,7 +401,7 @@
 
         // --- NAVEGACIÓN PRINCIPAL ---
         window.elegirTest = (id) => {
-            if (!examData) return alert("⚠️ Error: No se ha cargado la base de datos (datos.json). Recarga la página o revisa el nombre del archivo.");
+            if (!examData) return alert("⚠️ Error: No se ha cargado la base de datos JSON. Recarga la página y asegúrate de que el archivo esté en la misma carpeta.");
             if (!localAudios[id]) return alert("⚠️ Debes subir el archivo de audio MP3 para este test primero.");
             currentTest = id;
             document.getElementById('test-info-nav').innerText = id === 'testA' ? "Test A: Volume 3" : "Test B: Advanced";
@@ -420,7 +433,7 @@
                 `;
                 player.src = URL.createObjectURL(localAudios[currentTest]); 
                 player.currentTime = 0; 
-                audioEndTime = 143; // Las instrucciones duran hasta el minuto 02:23 aproximadamente
+                audioEndTime = 143; 
                 isDirections = true;
                 player.play().catch(e => console.log(e));
             } else {
@@ -430,7 +443,7 @@
         }
 
         window.finalizarDirections = () => {
-            isDirections = false; // Ya no estamos en las instrucciones
+            isDirections = false; 
             const player = document.getElementById('audio-player'); player.pause();
             ocultarTodo(); document.getElementById('view-test').classList.remove('hidden-section');
             document.getElementById('mini-score').classList.remove('hidden');
@@ -443,43 +456,75 @@
             iniciarRelojGeneral(session.section === 'listening' ? 35 : (session.section === 'structure' ? 25 : 55));
         };
 
-        // --- LÓGICA DE PREGUNTAS Y TIMER ---
+        // --- 🌟 RENDERIZADO CON PROTECCIÓN ANTI-CRASH 🌟 ---
         function renderBlock() {
-            const box = document.getElementById('q-box'); box.innerHTML = '';
-            const data = examData[currentTest][session.section];
-            if (!data || data.length === 0) { box.innerHTML = '<p>No hay datos. Verifica tu archivo JSON.</p>'; return; }
-            
-            const start = session.step * 2;
-            const slice = data.slice(start, start + 2);
-            document.getElementById('p-bar').style.width = ((start + slice.length) / data.length * 100) + "%";
-            document.getElementById('p-btn').disabled = session.step === 0;
-            
-            slice.forEach(q => {
-                const card = document.createElement('div');
-                card.className = "bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-md fade-in";
-                card.innerHTML = `
-                    <div class="flex justify-between border-b border-slate-50 pb-4 mb-5">
-                        <div class="flex gap-3 items-center">
-                            <span class="bg-slate-900 text-white w-8 h-8 flex items-center justify-center rounded-lg font-black text-sm">${q.id}</span>
-                            <span class="font-black text-base text-slate-800">${q.pregunta || 'Select answer:'}</span>
+            try {
+                const box = document.getElementById('q-box'); 
+                box.innerHTML = '';
+                
+                if (!examData) {
+                    box.innerHTML = '<p class="text-rose-500 font-bold text-xl text-center py-10">Error crítico: La base de datos no está cargada. ⛔</p>';
+                    return;
+                }
+
+                // Verificar que exista la sección específica en el JSON
+                const data = examData[currentTest] && examData[currentTest][session.section];
+                if (!data || !Array.isArray(data) || data.length === 0) { 
+                    box.innerHTML = `<div class="bg-rose-50 p-8 rounded-2xl border border-rose-200 text-center"><p class="text-rose-600 font-bold text-lg mb-2">⛔ Faltan datos en tu JSON para: ${currentTest} -> ${session.section}</p><p class="text-slate-600 text-sm">Revisa que la estructura de tu archivo datos.json coincida exactamente con la requerida.</p></div>`; 
+                    return; 
+                }
+                
+                const start = session.step * 2;
+                const slice = data.slice(start, start + 2);
+                document.getElementById('p-bar').style.width = ((start + slice.length) / data.length * 100) + "%";
+                document.getElementById('p-btn').disabled = session.step === 0;
+                
+                if (slice.length === 0) {
+                    box.innerHTML = '<p class="text-slate-500 font-bold text-center py-10">Has llegado al final de esta sección.</p>';
+                    return;
+                }
+
+                slice.forEach(q => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white p-6 md:p-8 rounded-[2rem] border border-slate-100 shadow-md fade-in";
+                    
+                    // Protección por si 'opciones' no es un arreglo
+                    const opcionesSeguras = Array.isArray(q.opciones) ? q.opciones : [];
+                    const letras = ['A','B','C','D'];
+                    
+                    const opcionesHTML = opcionesSeguras.map((op, i) => {
+                        const letra = letras[i] || String.fromCharCode(65 + i);
+                        return `
+                        <label class="flex items-center p-3.5 rounded-xl border-2 border-slate-50 hover:bg-sky-50 cursor-pointer group" id="l-${q.id}-${letra}">
+                            <input type="radio" name="q-${q.id}" class="toefl-radio" onchange="chk(${q.id}, '${letra}')">
+                            <span class="ml-3 font-bold text-sm text-slate-600 group-hover:text-slate-900">${op}</span>
+                        </label>`;
+                    }).join('');
+
+                    card.innerHTML = `
+                        <div class="flex justify-between border-b border-slate-50 pb-4 mb-5">
+                            <div class="flex gap-3 items-center">
+                                <span class="bg-slate-900 text-white w-8 h-8 flex items-center justify-center rounded-lg font-black text-sm">${q.id || '?'}</span>
+                                <span class="font-black text-base text-slate-800">${q.pregunta || 'Select answer:'}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="grid gap-3">
-                        ${q.opciones.map((op, i) => `
-                            <label class="flex items-center p-3.5 rounded-xl border-2 border-slate-50 hover:bg-sky-50 cursor-pointer group" id="l-${q.id}-${['A','B','C','D'][i]}">
-                                <input type="radio" name="q-${q.id}" class="toefl-radio" onchange="chk(${q.id}, '${['A','B','C','D'][i]}')">
-                                <span class="ml-3 font-bold text-sm text-slate-600 group-hover:text-slate-900">${op}</span>
-                            </label>`).join('')}
-                    </div>
-                    <div id="f-${q.id}" class="mt-4 p-4 rounded-xl hidden text-sm"></div>`;
-                box.appendChild(card);
-            });
-            
-            gestionarAudioDePagina();
-            startSpeedTimer();
+                        <div class="grid gap-3">
+                            ${opcionesHTML}
+                        </div>
+                        <div id="f-${q.id}" class="mt-4 p-4 rounded-xl hidden text-sm"></div>`;
+                    box.appendChild(card);
+                });
+                
+                gestionarAudioDePagina();
+                startSpeedTimer();
+                
+            } catch (error) {
+                console.error("Error en renderBlock:", error);
+                document.getElementById('q-box').innerHTML = `<div class="bg-rose-50 p-8 rounded-2xl border border-rose-200"><p class="text-rose-600 font-bold text-lg mb-2">⛔ Error interno dibujando las preguntas.</p><p class="text-slate-600 text-sm font-mono">${error.message}</p></div>`;
+            }
         }
 
-        // --- REPRODUCCIÓN DOBLE EXACTA (USANDO EL MAPEO DE TIEMPOS) ---
+        // --- REPRODUCCIÓN DOBLE EXACTA ---
         function setupAudioLogic() {
             const player = document.getElementById('audio-player');
             player.addEventListener('timeupdate', () => {
@@ -489,7 +534,6 @@
                     player.pause();
                     
                     if (isDirections) {
-                        // Si era solo la instrucción de inicio, no repetir
                         audioEndTime = 0;
                         return;
                     }
@@ -498,14 +542,12 @@
                         repsCount++;
                         document.getElementById('reps-label').innerText = "2 / 2";
                         
-                        // Buscar en nuestro arreglo exacto
                         const timings = audioTimings[currentTest];
                         if(timings && timings[session.step]) {
                             player.currentTime = timings[session.step][0];
                             player.play().catch(e => console.log(e));
                         }
                     } else {
-                        // Terminó de repetirse, pausar hasta que den en Siguiente
                         audioEndTime = 0;
                     }
                 }
@@ -522,14 +564,13 @@
                 return;
             }
             
-            // Asignar el inicio y fin preestablecidos para esta página
             const [startT, endT] = timings[session.step];
             audioEndTime = endT;
             
             repsCount = 0;
             document.getElementById('reps-label').innerText = "1 / 2";
             player.currentTime = startT;
-            player.play().catch(e => console.log(e));
+            player.play().catch(e => console.log("Bloqueado por el navegador, presiona el botón de play en la barra visible:", e));
         }
 
         function startSpeedTimer() {
@@ -539,8 +580,8 @@
                 const timings = audioTimings[currentTest];
                 if (timings && timings[session.step]) {
                     const [startT, endT] = timings[session.step];
-                    // Para Listening: Tiempo total del audio (x2 repeticiones) + 24 segundos de margen (12s por pregunta)
-                    qTimeLeft = Math.ceil((endT - startT) * 2) + 24; 
+                    // Tiempo de audio x2 repeticiones + 24 segundos extras para pensar
+                    qTimeLeft = Math.ceil(((endT || (startT + 60)) - startT) * 2) + 24; 
                 } else {
                     qTimeLeft = 60;
                 }
